@@ -1,0 +1,57 @@
+html, body {
+  background-color: #02a8f3;
+  overflow: hidden; }
+
+* {
+  margin: 0;
+  padding: 0; }
+
+body {
+  font-family: "Hiragino Kaku Gothic Pro", "Osaka", "Meiryo", "MS PGothic", sans-serif;
+  font-size: 11px;
+  font-size: 1.1rem;
+  width: 100%;
+  height: 100%;
+  color: #fff9ef; }
+
+main {
+  width: 100%;
+  height: 220px;
+  position: absolute;
+  top: 50%;
+  margin-top: -110px; }
+
+h1,
+h2 {
+  font-weight: normal; }
+
+h1 {
+  text-align: center;
+  margin-bottom: 10px; }
+
+main > div {
+  display: flex;
+  justify-content: center; }
+  main > div > section {
+    width: 33%;
+    max-width: 200px;
+    text-align: center; }
+    main > div > section h2 {
+      margin-bottom: 10px; }
+    main > div > section .playButton {
+      width: 100px;
+      height: 100px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+      font-size: 100px;
+      text-align: center;
+      transition: 0.2s all ease-in-out;
+      cursor: pointer;
+      color: #3e4157; }
+      main > div > section .playButton:hover {
+        color: #fff9ef; }
+      main > div > section .playButton i {
+        display: block; }
+
+/*# sourceMappingURL=style.css.map */

@@ -1,0 +1,56 @@
+// コンパスのインポート
+@import "compass";
+
+//-------------------------------------------------
+//  基本スタイル設定
+//-------------------------------------------------
+// #mathBoxの辺の長さ
+$boxWidth: 600;
+// 点の横幅
+$pointWidth: 5;
+
+#mathBox {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: $boxWidth + px;
+  height: $boxWidth + px;
+  margin-left: - $boxWidth / 2 + px;
+  margin-top: - $boxWidth / 2+ px;
+
+  ul {
+    li {
+      position: absolute;
+      background-color: hsl(0, 100, 68);
+      // 円を描くために角丸を使用
+      @include border-radius($pointWidth/2 + px);
+      width: $pointWidth + px;
+      height: $pointWidth + px;
+    }
+  }
+}
+
+//---------------------------------------
+//  ハイポトロコイド曲線(内サイクロイド)
+//---------------------------------------
+//プロットする点の数
+$pointNum: 196;
+// ハイポロイドにおいて、1プロットあたりに回転する角の量
+$singleRadian: 3 * (360 / $pointNum) * (pi() / 180);
+
+#mathBox {
+  li {
+    @for $t from 1 through $pointNum {
+      &:nth-child(#{$t}) {
+        $angle: $singleRadian * $t; // 1プロット辺り$singleRadianずつ角を回転させる。
+        $rc: 150;
+        $rm: 90;
+        $rd: 150;
+        $x: $boxWidth / 2 + ($rc - $rm) * cos($angle) + $rd * cos(($rc - $rm) * $angle / $rm) + px;
+        $y: $boxWidth / 2 + ($rc - $rm) * sin($angle) - $rd * sin(($rc - $rm) * $angle / $rm) + px;
+        @include translate($x, $y); // $x,$yの位置に点をプロット
+      }
+    }
+  }
+
+}

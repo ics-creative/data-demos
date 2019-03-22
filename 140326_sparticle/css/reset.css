@@ -1,0 +1,21 @@
+body {
+    margin: 0;
+    /*background-color: #000000;*/
+    /*color: #FFFFFF;*/
+}
+h1{
+    /*color: #FFFFFF;*/
+}
+#contents{
+    /*margin: 20px;*/
+    font-family: 'Lucida Grande','Hiragino Kaku Gothic ProN',"メイリオ", sans-serif;
+}
+#markdown_content{
+    background-color: #FFFFFF;
+    color: #333333;
+    /*margin: 20px;*/
+    font-family: 'Lucida Grande','Hiragino Kaku Gothic ProN',"メイリオ", sans-serif;
+}
+a{
+    cursor: pointer;
+}

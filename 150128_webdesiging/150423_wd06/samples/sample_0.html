@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=1024,initial-scale=1.0">
+		<title>CreateJS Drawing Sample</title>
+		<link href="style.css" rel="stylesheet" />
+		<script src="http://code.createjs.com/createjs-2014.12.12.min.js"></script>
+		<script>
+			var stage;
+			var shape;
+			var oldX = 0; // マウス座標管理
+			var oldY = 0;
+			var hue = 0; // 色相
+			/** 初期化 */
+			function init() {
+				stage = new createjs.Stage("myCanvas");
+
+				// 描画用シェイプを作成
+				shape = new createjs.Shape();
+				stage.addChild(shape);
+
+				createjs.Ticker.on("tick", onTick);
+			}
+			/** フレームごとに処理 */
+			function onTick() {
+				// 色
+				var color = "hsl(" + hue + ", 80%, 60%)";
+				// 曲線を描く
+				shape.graphics
+						.setStrokeStyle(5)
+						.beginStroke(color)
+						.moveTo(oldX, oldY)
+						.lineTo(stage.mouseX, stage.mouseY);
+
+				// マウス座標を保存
+				oldX = stage.mouseX;
+				oldY = stage.mouseY;
+
+				// 描画する
+				stage.update();
+				hue++; // 色相をずらす
+			}
+		</script>
+	</head>
+	<body onload="init()">
+		<canvas id="myCanvas" width="1024" height="768"></canvas>
+	</body>
+</html>

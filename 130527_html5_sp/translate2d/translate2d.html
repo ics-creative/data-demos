@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Bunnymark描画テスト(translate2d) - ICS LAB</title>
+	<!-- Define the viewport -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=0, target-densitydpi=device-dpi">
+	<!-- iOS helper -->
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+</head>
+
+<body style="margin:0;padding:0;">
+
+	<script>
+		window.onload = function () {
+			setTimeout(function () {
+				translate2dBench("wrapper");
+			}, 500);
+		}
+	</script>
+	<div id="wrapper" style="width:100%;height:100%;position:absolute; overflow:hidden;">
+	</div>
+	<div id="framerate" style="width:100%;height:100%;position:absolute;top:0px;left:0px;"></div>
+
+
+	<script src="../bunny.js"></script>
+	<script src="../common.js"></script>
+	<script src="translate2d.js"></script>
+</body>
+</html>
+

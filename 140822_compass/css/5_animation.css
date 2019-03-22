@@ -1,0 +1,87 @@
+#mathBox {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  margin-left: auto;
+  margin-right: auto;
+}
+#mathBox ul li {
+  position: absolute;
+  background-color: #ff5c5c;
+  -moz-border-radius: 100px;
+  -webkit-border-radius: 100px;
+  border-radius: 100px;
+  width: 200px;
+  height: 200px;
+  left: 50%;
+  top: 50%;
+  margin-left: -100px;
+  margin-top: -100px;
+  -moz-animation: colorAnimation 2s linear infinite;
+  -webkit-animation: colorAnimation 2s linear infinite;
+  animation: colorAnimation 2s linear infinite;
+}
+
+@-moz-keyframes colorAnimation {
+  0% {
+    background-color: #ff5c5c;
+  }
+
+  25% {
+    background-color: #adff5c;
+  }
+
+  50% {
+    background-color: #5cffff;
+  }
+
+  75% {
+    background-color: #ad5cff;
+  }
+
+  100% {
+    background-color: #ff5c5c;
+  }
+}
+@-webkit-keyframes colorAnimation {
+  0% {
+    background-color: #ff5c5c;
+  }
+
+  25% {
+    background-color: #adff5c;
+  }
+
+  50% {
+    background-color: #5cffff;
+  }
+
+  75% {
+    background-color: #ad5cff;
+  }
+
+  100% {
+    background-color: #ff5c5c;
+  }
+}
+@keyframes colorAnimation {
+  0% {
+    background-color: #ff5c5c;
+  }
+
+  25% {
+    background-color: #adff5c;
+  }
+
+  50% {
+    background-color: #5cffff;
+  }
+
+  75% {
+    background-color: #ad5cff;
+  }
+
+  100% {
+    background-color: #ff5c5c;
+  }
+}

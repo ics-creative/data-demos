@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>clock_watch</title>
+
+<script src="https://code.createjs.com/easeljs-0.7.1.min.js"></script>
+<script src="https://code.createjs.com/tweenjs-0.5.1.min.js"></script>
+<script src="https://code.createjs.com/movieclip-0.7.1.min.js"></script>
+<script src="clock_watch.js"></script>
+
+<script>
+var canvas, stage, exportRoot;
+	
+function init() {
+	canvas = document.getElementById("canvas");
+
+	exportRoot = new lib.clock_watch();
+
+	stage = new createjs.Stage(canvas);
+	stage.addChild(exportRoot);
+	stage.update();
+
+	createjs.Ticker.setFPS(lib.properties.fps);
+	createjs.Ticker.addEventListener("tick", stage);
+	
+	handleResize();
+	window.onresize = handleResize;
+}
+
+function playSound(id, loop) {
+	createjs.Sound.play(id, createjs.Sound.INTERRUPT_EARLY, 0, 0, loop);
+}
+	
+function handleResize(){
+	stage.canvas.width = window.innerWidth;
+	stage.canvas.height = window.innerHeight;
+	var scale = Math.min(window.innerWidth/512, window.innerHeight/512);
+	exportRoot.scaleX = exportRoot.scaleY = scale;
+	exportRoot.x = (window.innerWidth - 512*scale) / 2;
+	exportRoot.y = (window.innerHeight - 512*scale) / 2;
+}
+</script>
+	
+<style>
+	body{
+		background: linear-gradient(135deg, #000000 0%, #220038 100%);
+		background: -webkit-linear-gradient(135deg, #000000 0%, #220038 100%);
+		padding: 0; 
+		margin: 0; 
+		overflow: hidden;
+		height: 100%;
+	}
+</style>
+	
+</head>
+
+<body onload="init();">
+	<canvas id="canvas" width="512" height="512"></canvas>
+</body>
+</html>

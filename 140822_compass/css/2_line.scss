@@ -1,0 +1,47 @@
+//-------------------------------------------------
+//  Compassの設定
+//-------------------------------------------------
+// コンパスのインポート
+@import "compass";
+
+//-------------------------------------------------
+//  基本スタイル設定
+//-------------------------------------------------
+// 点の横幅
+$pointWidth: 5;
+#mathBox {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 400px;
+  height: 400px;
+  margin-left: -200px;
+  margin-top: -200px;
+
+  ul {
+    li {
+      position: absolute;
+      background-color: hsl(0, 100, 68);
+      // 円を描くために角丸を使用
+      @include border-radius($pointWidth/2 + px);
+      width: $pointWidth + px;
+      height: $pointWidth + px;
+    }
+  }
+}
+
+//-------------------------------------------------
+//  線の描画
+//-------------------------------------------------
+#mathBox {
+  li {
+    @for $t from 1 through 100 {
+      // :&で親要素（li)を参照
+      &:nth-child(#{$t}) {
+        $x: $t * 4 + px;
+        $y: $t * 4 + px;
+        @include translate($x, $y); // $x,$yの位置に点をプロット
+      }
+    }
+  }
+}

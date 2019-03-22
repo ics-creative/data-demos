@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>sample_3</title>
+
+<script src="https://code.createjs.com/easeljs-0.7.1.min.js"></script>
+<script src="https://code.createjs.com/tweenjs-0.5.1.min.js"></script>
+<script src="https://code.createjs.com/movieclip-0.7.1.min.js"></script>
+<script src="sample_3.js"></script>
+
+<script>
+var canvas, stage, exportRoot;
+
+function init() {
+	canvas = document.getElementById("canvas");
+	exportRoot = new lib.sample_3();
+
+	stage = new createjs.Stage(canvas);
+	stage.addChild(exportRoot);
+	stage.update();
+
+	createjs.Ticker.setFPS(lib.properties.fps);
+	createjs.Ticker.addEventListener("tick", stage);
+}
+</script>
+<!--JS,CSSの追加読み込み-->
+<meta name="viewport" content="width=1024,user-scalable=yes">
+<link rel='stylesheet' href='css/spectrum.css' />
+<link rel="stylesheet" href="css/sample_3.css"/>
+<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script src='js/spectrum.js'></script>
+<!--JS,CSSの追加読み込み終わり-->
+</head>
+<body onload="init();" style="background-color:#D4D4D4">
+<div id="main">
+    <div id="header">
+        <h1>Draw Tool Sample</h1>
+        <div id="settingArea">
+            <div id="settingAreaInner">
+                <div class="inner clearfix">
+                    <div>
+                        <h2>Color</h2>
+                        <input id="picker" data-show-alpha="true" data-color="#E60012" data-show-buttons="false" data-show-palette="true" />
+                    </div>
+                    <div>
+                        <h2>Size</h2>
+                        <input id="slider" type="range" name="slider" value="3" min="3" max="72">
+                        <p id="sizeText">3px</p>
+                    </div>
+                    <div id="resetButtonContainer">
+                        <div id="resetButton" class="button">
+                            <p>Reset</p>
+                        </div>
+                    </div>
+					<div id="saveButtonContainer">
+                        <div id="saveButton" class="button">
+                            <p>Save</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="shapeContainer">
+        <canvas id="canvas" width="960" height="558" style="background-color:#FFFFFF"></canvas>
+    </div>
+    <div id="footer">
+    </div>
+</div>
+</body>
+</html>

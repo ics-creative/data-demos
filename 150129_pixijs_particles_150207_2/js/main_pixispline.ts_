@@ -1,0 +1,800 @@
+/// <reference path="pixi/pixi.d.ts" />
+/// <reference path="easeljs/easeljs.d.ts" />
+
+window.addEventListener("load", ()=> {
+	new project.Main();
+});
+
+module project {
+	/**
+	 * パーティクルデモのメインクラスです。
+	 * @class project.Main
+	 */
+	export class Main {
+		private stage:PIXI.Stage;
+		private renderer:PIXI.IPixiRenderer;
+
+		/**
+		 * @constructor
+		 */
+		constructor() {
+
+			this.stage = new PIXI.Stage(0x0);
+
+			var options = {
+				view: null,
+				transparent: false,
+				resolution: 1
+			};
+
+			this.renderer = PIXI.autoDetectRenderer(800, 600, options);
+			document.body.appendChild(this.renderer.view);
+
+			// パーティクルサンプルを作成
+			var sample = new ParticleSample();
+			this.stage.addChild(sample);
+
+			// Tickerを作成
+			createjs.Ticker.timingMode = createjs.Ticker.RAF;
+			createjs.Ticker.on("tick", this.handleTick, this);
+
+			// リサイズイベント
+			this.handleResize();
+			window.addEventListener("resize", ()=> {
+				this.handleResize()
+			});
+		}
+
+		/**
+		 * エンターフレームイベント
+		 */
+		private handleTick():void {
+			// create residual image effect
+			this.renderer.render(this.stage);
+		}
+
+		/**
+		 * リサイズイベント
+		 */
+		private handleResize():void {
+			(<PIXI.WebGLRenderer> this.renderer).resize(innerWidth, innerHeight);
+		}
+	}
+
+
+	/**
+	 * 大量のパーティクルを発生させてみた
+	 * マウスを押してる間でてくるよ
+	 * @see http://wonderfl.net/c/4WjT
+	 * @class demo.ParticleSample
+	 */
+	class ParticleSample extends PIXI.DisplayObjectContainer {
+		private _emitter:ParticleEmitter;
+		private _bg:PIXI.Graphics;
+		private _count:number;
+		private _lines:PIXI.Graphics;
+		private _linePoint:any[];
+		private _isDown:boolean;
+		private _shadow:PIXI.Sprite;
+
+		constructor() {
+			super();
+
+			// パーティクルを初期化
+			ParticleInitializer.generate();
+
+			this.interactive = true;
+
+			this._count = 0;
+
+			this._bg = new PIXI.Graphics();
+			this.addChild(this._bg);
+
+			this._lines = new PIXI.Graphics();
+			this.addChild(this._lines);
+			this._linePoint = [];
+
+			this._emitter = new ParticleEmitter();
+			this._emitter.latestX = innerWidth / 2;
+			this._emitter.latestY = innerHeight / 2;
+			this.addChild(this._emitter.container);
+
+			this._shadow = new PIXI.Sprite(PIXI.Texture.fromImage("imgs/Shadow-assets/Shadow.png"));
+			this._shadow.blendMode = PIXI.blendModes.SCREEN;
+			this.addChild(this._shadow);
+
+			this.mousedown = this.touchstart = (data:PIXI.InteractionData)=> {
+				this.handleMouseDown(data);
+			};
+			this.mousemove = this.touchmove = (data:PIXI.InteractionData)=> {
+				this.handleMouseMove(data);
+			};
+			this.mouseup = this.mouseupoutside = this.touchend = this.touchendoutside = (data:PIXI.InteractionData)=> {
+				this.handleMouseUp(data);
+			};
+
+			createjs.Ticker.on("tick", this.enterFrameHandler, this);
+
+			this.handleResize();
+			window.addEventListener("resize", ()=> {
+				this.handleResize();
+			});
+		}
+
+
+		/**
+		 * エンターフレームイベント
+		 * @param event
+		 */
+		enterFrameHandler(event):void {
+
+			if (this._isDown) {
+				this.createParticle();
+			}
+
+
+
+
+			var color1 = {h: new Date().getTime() / 40, s: 50, l: 60};
+			var color2 = {h: (new Date().getTime() + 40 * 89) / 40, s: 70, l: 70};
+
+			this._bg.clear();
+
+			// グラデーションを作るための無理矢理な手法
+			for (var i = 0, max = 1024; i < max; i++) {
+
+				var color = ColorUtil.hslToRgb(
+					color1.h * (i / max) + color2.h * (1 - i / max),
+					color1.s * (i / max) + color2.s * (1 - i / max),
+					color1.l * (i / max) + color2.l * (1 - i / max));
+
+				this._bg.beginFill(color, 1.0);
+				//this._bg.beginLinearGradientFill([color1, color2], [0, 1], 0, 0, 0, window.innerHeight);
+				this._bg.drawRect(0, window.innerHeight * i / max, window.innerWidth, window.innerHeight / max);
+			}
+
+
+			this._emitter.update();
+
+			if (this._isDown) {
+				this._linePoint.push({
+					x: this._emitter.x,
+					y: this._emitter.y,
+					vx: this._emitter.vx,
+					vy: this._emitter.vy,
+					angular : this._emitter.angular
+				});
+			} else {
+				this._linePoint.shift();
+			}
+
+			// Emitterの状態に応じて線を描く
+			this._lines.clear();
+			var max = this._linePoint.length - 1;
+
+			var LINE_MARGIN = 0.4;
+			var LMAX = 10;
+
+			var line = [];
+
+			for (var j = 0; j < LMAX; j++) {
+				line[j] = [];
+			}
+
+			for (var i = 0; i < max; i++) {
+				var p1 = this._linePoint[i];
+				var p2 = this._linePoint[i + 1];
+				// Emitterの状態に応じて線を描く
+				this._lines.lineStyle(2, 0xFFFFFF, i / max * 0.2);
+				this._lines.moveTo(p1.x, p1.y);
+				this._lines.lineTo(p2.x, p2.y);
+
+				var scala = Math.sqrt(p1.vx * p1.vx + p1.vy * p1.vy);
+
+
+				for (var j = 0; j < LMAX; j++) {
+					var angular = p1.angular + (j - LMAX/2) * Math.PI * 2;
+
+					var sx = p1.x + scala * Math.cos(angular) * LINE_MARGIN * j;
+					var sy = p1.y + scala * Math.sin(angular) * LINE_MARGIN * j;
+
+					line[j][i] = {x:sx, y:sy};
+				}
+			}
+
+			if(this._linePoint.length > 2)
+			{
+				for (var i = 0; i < line.length; i++) {
+					var lineSplined = GeomUtil.splineStream(line[i], 2);
+					var max = lineSplined.length - 1;
+					for (var j = 0; j < max; j++) {
+						var o1 = lineSplined[j];
+						var o2 = lineSplined[j + 1];
+						// Emitterの状態に応じて線を描く
+						this._lines.lineStyle( 4 * (1 - i / line.length) + 1 ,0xFFFFFF, j / max * 0.3);
+						this._lines.moveTo(o1.x, o1.y);
+						this._lines.lineTo(o2.x, o2.y);
+					}
+				}
+			}
+
+			if (max > 1000) {
+				this._linePoint.shift();
+			}
+		}
+
+
+		private handleMouseDown(event:PIXI.InteractionData):void {
+			this._isDown = true;
+
+			this._emitter.latestX = event.global.x;
+			this._emitter.latestY = event.global.y;
+		}
+
+		private handleMouseMove(event:PIXI.InteractionData):void {
+			this._emitter.latestX = event.global.x;
+			this._emitter.latestY = event.global.y;
+		}
+
+		private handleMouseUp(event:PIXI.InteractionData):void {
+			this._isDown = false;
+
+			this._emitter.latestX = event.global.x;
+			this._emitter.latestY = event.global.y;
+		}
+
+		private createParticle():void {
+			this._emitter.emit(this._emitter.latestX, this._emitter.latestY);
+		}
+
+		private handleResize():void {
+			this._shadow.scale.x = (window.innerWidth / 1024);
+			this._shadow.scale.y = (window.innerHeight / 1024);
+		}
+	}
+
+	/**
+	 * パーティクル発生装置。マウス座標から速度を計算する。
+	 * @class project.Emitter
+	 */
+	class Emitter {
+		/** 速度(X方向) */
+		vy:number = 0;
+		/** 速度(Y方向) */
+		x:number = 0;
+		/** マウスのX座標 */
+		latestY:number = 0;
+		/** マウスのY座標 */
+		latestX:number = 0;
+		/** パーティクル発生のX座標 */
+		y:number = 0;
+		/** パーティクル発生のY座標 */
+		vx:number = 0;
+
+		/** 現在のベクトルの角度 */
+		angular:number = 0;
+		/** 角速度 */
+		vAngular:number = 0;
+
+		/**
+		 * @constructor
+		 */
+		constructor() {
+		}
+
+		/**
+		 * パーティクルエミッターの計算を行います。この計算によりマウスの引力が計算されます。
+		 * @method
+		 */
+		update():void {
+			var dx:number = this.latestX - this.x;
+			var dy:number = this.latestY - this.y;
+			var d:number = Math.sqrt(dx * dx + dy * dy) * 0.2;
+			var rad:number = Math.atan2(dy, dx);
+
+			this.vx += Math.cos(rad) * d;
+			this.vy += Math.sin(rad) * d;
+
+			this.vx *= 0.4;
+			this.vy *= 0.4;
+
+			this.x += this.vx;
+			this.y += this.vy;
+
+			this.vAngular = rad - this.angular;
+			this.angular = rad;
+		}
+	}
+
+
+	/**
+	 * パーティクルエミッター
+	 * @class project.ParticleEmitter
+	 */
+	class ParticleEmitter extends Emitter {
+		/** 1フレーム間に発生させる Particle 数 */
+		numParticles:number;
+		container:PIXI.DisplayObjectContainer;
+		PRE_CACHE_PARTICLES:number;
+		_particleActive:Particle[];
+		_particlePool:Particle[];
+
+		/**
+		 * @constructor
+		 */
+		constructor() {
+			super();
+
+			this.numParticles = 10;
+			this.PRE_CACHE_PARTICLES = 300;
+
+			this.container = new PIXI.DisplayObjectContainer();
+
+			this._particleActive = [];
+			this._particlePool = [];
+
+			/* 予め必要そうな分だけ作成しておく */
+			for (var i = 0; i < this.PRE_CACHE_PARTICLES; i++) {
+				this._particlePool.push(new Particle());
+			}
+		}
+
+		/**
+		 * パーティクルを発生させます。
+		 * @param {number} x パーティクルの発生座標
+		 * @param {number} y パーティクルの発生座標
+		 * @method
+		 */
+		emit(x:number, y:number) {
+			for (var i = 0; i < this.numParticles; i++) {
+				this.getNewParticle(x, y);
+			}
+		}
+
+		/**
+		 * パーティクルを更新します。
+		 * @method
+		 */
+		update() {
+
+			super.update();
+
+			for (var i = 0; i < this._particleActive.length; i++) {
+				var p = this._particleActive[i];
+				if (!p.getIsDead()) {
+
+					if (p.y >= window.innerHeight) {
+						p.vy *= -0.9;
+						p.y = window.innerHeight;
+					} else if (p.y <= 0) {
+						p.vy *= -0.9;
+						p.y = 0;
+					}
+					if (p.x >= window.innerWidth) {
+						p.vx *= -0.9;
+						p.x = window.innerWidth;
+					} else if (p.x <= 0) {
+						p.vx *= -0.9;
+						p.x = 0;
+					}
+
+					p.update();
+				} else {
+					this.removeParticle(p);
+				}
+			}
+		}
+
+		/**
+		 * パーティクルを追加します。
+		 * @param {THREE.Vector3} emitPoint
+		 * @method
+		 */
+		getNewParticle(emitX:number, emitY:number) {
+			var p:Particle = this.fromPool();
+			p.resetParameters(this.x, this.y, this.vx, this.vy, this.vAngular);
+			this._particleActive.push(p);
+			this.container.addChild(p);
+			return p;
+		}
+
+		/**
+		 * パーティクルを削除します。
+		 * @param {Particle} particle
+		 * @method
+		 */
+		removeParticle(p:Particle) {
+
+			this.container.removeChild(p);
+
+			var index = this._particleActive.indexOf(p);
+			if (index > -1) {
+				this._particleActive.splice(index, 1);
+			}
+
+			this.toPool(p);
+		}
+
+		/**
+		 * アクティブなパーティクルを取り出します。
+		 * @returns {project.Particle[]}
+		 * @method
+		 */
+		getActiveParticles():Particle[] {
+			return this._particleActive;
+		}
+
+
+		/**
+		 * プールからインスタンスを取り出します。
+		 * プールになければ新しいインスタンスを作成します。
+		 * @returns {project.Particle}
+		 * @method
+		 */
+		fromPool():Particle {
+			if (this._particlePool.length > 0)
+				return this._particlePool.shift();
+
+			else return new Particle();
+		}
+
+		/**
+		 * プールにインスタンスを格納します。
+		 * @param {project.Particle}
+		 * @method
+		 */
+		toPool(particle:Particle) {
+			this._particlePool.push(particle);
+		}
+	}
+
+	class ParticleInitializer {
+		static NUM_PARTICLE:number = 200;
+
+		static generate() {
+			var spriteSheetBuilder = new createjs.SpriteSheetBuilder();
+			spriteSheetBuilder.padding = 2;
+
+
+			for (var i = 0; i < ParticleInitializer.NUM_PARTICLE; i++) {
+				var shape = new createjs.Shape();
+				var size = Math.random() * Math.random() * Math.random() * 80 + 2;
+
+				var colorHsl:string = createjs.Graphics.getHSL(
+					160 + 20 * Math.random(),
+					0 + Math.random() * 20,
+					50 + Math.random() * 50);
+
+				shape.graphics.clear();
+
+				// 円
+				if (Math.random() < 0.7) {
+					if (Math.random() < 0.3) {
+						// もやっとした円
+						shape.graphics.beginRadialGradientFill([colorHsl, "#000000"], [0.0, 1.0], 0, 0, size / 10, 0, 0, size);
+					}
+					else if (Math.random() < 0.5) {
+						// キリッとした円
+						shape.graphics.beginFill(colorHsl);
+					} else {
+						// 輪郭だけの円
+						shape.graphics
+							.setStrokeStyle(2) // 線の太さ
+							.beginStroke(createjs.Graphics.getRGB(255, 255, 255))
+					}
+
+					shape.graphics.drawCircle(0, 0, size);
+					shape.graphics.endFill();
+				}
+				// 四角形
+				else if (Math.random() < 0.5) {
+					if (Math.random() < 0.1) {
+						// キリッとした円
+						shape.graphics.beginFill(colorHsl);
+					} else {
+						// 輪郭だけの円
+						shape.graphics
+							.setStrokeStyle(2) // 線の太さ
+							.beginStroke(createjs.Graphics.getRGB(255, 255, 255))
+					}
+
+					shape.graphics
+						.drawRect(-size, -size, size * 2, size * 2)
+						.endFill();
+				}
+				// 三角形
+				else {
+					if (Math.random() < 0.5) {
+						// キリッとした円
+						shape.graphics.beginFill(colorHsl);
+					} else {
+						// 輪郭だけの円
+						shape.graphics
+							.setStrokeStyle(2) // 線の太さ
+							.beginStroke(createjs.Graphics.getRGB(255, 255, 255))
+					}
+
+					var takasa = size * Math.sin(Math.PI / 3);
+
+					shape.graphics
+						.moveTo(-size / 2, size / 2)
+						.lineTo(0, size / 2 - takasa)
+						.lineTo(+size / 2, size / 2)
+						.closePath()
+						.endFill();
+				}
+
+
+				var padding = 4;
+				shape.cache(-size - padding, -size - padding, size * 2 + padding * 2, size * 2 + padding * 2);
+
+				var frameNum = spriteSheetBuilder.addFrame(shape);
+				spriteSheetBuilder.addAnimation("particle_" + i, [frameNum]);
+			}
+
+			spriteSheetBuilder.build();
+			ParticleInitializer.convertSpriteSheet(spriteSheetBuilder.spriteSheet)
+		}
+
+		/**
+		 * CreateJSのスプライトシートビルダーを使られたスプライトシートを
+		 * Pixi.jsのスプライトシート機能に展開するクラス。
+		 */
+		static convertSpriteSheet(spriteSheet:any):void {
+			var textureOriginal = PIXI.Texture.fromCanvas(spriteSheet._images[0]);
+
+			for (var frameLabel in spriteSheet._data) {
+				var animation = spriteSheet.getAnimation(frameLabel);
+				var frame = spriteSheet.getFrame(animation.frames[0]);
+				var textureSize = new PIXI.Rectangle(frame.rect.x, frame.rect.y, frame.rect.width, frame.rect.height);
+				PIXI.TextureCache[frameLabel] = new PIXI.Texture(textureOriginal.baseTexture, textureSize);
+			}
+		}
+	}
+
+
+	/**
+	 * @class demo.Particle
+	 */
+	class Particle extends PIXI.Sprite {
+		public vx:number;
+		public vy:number;
+		public life:number;
+		public size:number;
+
+		private _count:number;
+		private _destroy:boolean;
+		private _vAngular:number;
+
+		/**
+		 * コンストラクタ
+		 * @constructor
+		 */
+		constructor() {
+			var texture = PIXI.Texture.fromFrame("particle_" + (ParticleInitializer.NUM_PARTICLE * Math.random() >> 0));
+			super(texture);
+
+			this.blendMode = PIXI.blendModes.SCREEN;
+			this.pivot.x = texture.frame.width / 2;
+			this.pivot.y = texture.frame.height / 2;
+
+			this._destroy = true;
+		}
+
+
+		/**
+		 * パーティクルをリセットします。
+		 * @param emitX
+		 * @param emitY
+		 * @param vx
+		 * @param vy
+		 * @param vAngular
+		 */
+		public resetParameters(emitX:number, emitY:number, vx:number, vy:number, vAngular:number):void {
+
+			this.x = emitX;
+			this.y = emitY;
+			this.vx = vx * 0.5 + (Math.random() - 0.5) * 10;
+			this.vy = vy * 0.5 + (Math.random() - 0.5) * 10;
+			this.life = Math.random() * Math.random() * 120 + 4;
+			this._count = 0;
+			this._destroy = false;
+			this.rotation = 360 * Math.random();
+			this._vAngular = vAngular;
+
+			this.alpha = 1.0;
+			this.scale.x = this.scale.y = 1.0;
+		}
+
+		/**
+		 * パーティクル個別の内部計算を行います。
+		 * @method
+		 */
+		public update():void {
+
+			// Gravity
+			this.vy += 0.2;
+
+			this.x += this.vx;
+			this.y += this.vy;
+			this.rotation += this._vAngular;
+
+			this._count++;
+
+			var maxD:number = (1 - this._count / this.life * 1 / 3);
+
+			this.alpha = Math.random() * 0.4 + 0.6 * this._count / this.life;
+			this.scale.x = this.scale.y = maxD;
+
+			// 死亡フラグ
+			if (this.life < this._count) {
+				this._destroy = true;
+				this.parent.removeChild(this);
+			}
+		}
+
+		/**
+		 * パーティクルが死んでいるかどうかを確認します。
+		 * @returns {boolean}
+		 * @method
+		 */
+		getIsDead():boolean {
+			return this._destroy;
+		}
+	}
+
+	class ColorUtil {
+		/**
+		 * Converts an HSL color value to RGB. Conversion formula
+		 * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
+		 *
+		 * @param   Number  h       The hue (0-360)
+		 * @param   Number  s       The saturation (0-100)
+		 * @param   Number  l       The lightness (0-100)
+		 * @return  number           The RGB representation
+		 */
+		static hslToRgb(h:number, s:number, l:number):number {
+			h = h % 360;
+			var m1, m2, hue;
+			var r, g, b
+			s /= 100;
+			l /= 100;
+			if (s == 0) {
+				r = g = b = (l * 255);
+			}
+			else {
+				if (l <= 0.5)
+					m2 = l * (s + 1);
+				else
+					m2 = l + s - l * s;
+				m1 = l * 2 - m2;
+				hue = h / 360;
+				r = Math.round(ColorUtil.hueToRgb(m1, m2, hue + 1 / 3));
+				g = Math.round(ColorUtil.hueToRgb(m1, m2, hue));
+				b = Math.round(ColorUtil.hueToRgb(m1, m2, hue - 1 / 3));
+			}
+
+			var color = (r << 16) | (g << 8) | b;
+			return color;
+		}
+
+		static hueToRgb(m1, m2, hue) {
+			var v;
+			if (hue < 0)
+				hue += 1;
+			else if (hue > 1)
+				hue -= 1;
+
+			if (6 * hue < 1)
+				v = m1 + (m2 - m1) * hue * 6;
+			else if (2 * hue < 1)
+				v = m2;
+			else if (3 * hue < 2)
+				v = m1 + (m2 - m1) * (2 / 3 - hue) * 6;
+			else
+				v = m1;
+
+			return 255 * v;
+		}
+	}
+
+	class GeomUtil {
+		/**
+		 * 開始点から終了点までに取得したい座標数を指定してまとめて座標を取得する関数です。
+		 * 第01引数に座標をオブジェクト型で複数格納した配列データを指定
+		 * 第02引数に補間数
+		 * 戻り値に座標がオブジェクト型の配列で返ります。
+		 * @param p
+		 * @param interpolate
+		 * @see http://hakuhin.jp/as/curve.html#CURVE_04
+		 * @returns {any[]}
+		 */
+		static splineStream(p:{x:number; y:number;}[], interpolate:number):{x:number; y:number;}[]{
+			var num = p.length;
+			var l = [];
+			var _A = [];
+			var _B = [];
+			var _C = [];
+
+			for (i = 0; i < num - 1; i++) {
+				var p0 = p[i];
+				var p1 = p[i + 1];
+				l[i] = Math.sqrt((p0.x - p1.x) * (p0.x - p1.x) + (p0.y - p1.y) * (p0.y - p1.y));
+			}
+
+			_A[0] = [0, 1, 0.5];
+			_B[0] = {
+				x: (3 / (2 * l[0])) * (p[1].x - p[0].x),
+				y: (3 / (2 * l[0])) * (p[1].y - p[0].y)
+			};
+			_A[num - 1] = [1, 2, 0];
+			_B[num - 1] = {
+				x: (3 / l[num - 2]) * (p[num - 1].x - p[num - 2].x),
+				y: (3 / l[num - 2]) * (p[num - 1].y - p[num - 2].y)
+			};
+
+			for (i = 1; i < num - 1; i++) {
+				var a = l[i - 1];
+				var b = l[i];
+				_A[i] = [b, 2.0 * (b + a), a];
+				_B[i] = {
+					x: (3.0 * (a * a * (p[i + 1].x - p[i].x)) + 3.0 * b * b * (p[i].x - p[i - 1].x)) / (b * a),
+					y: (3.0 * (a * a * (p[i + 1].y - p[i].y)) + 3.0 * b * b * (p[i].y - p[i - 1].y)) / (b * a)
+				};
+			}
+			for (i = 1; i < num; i++) {
+				var d = _A[i - 1][1] / _A[i][0];
+
+				_A[i] = [0, _A[i][1] * d - _A[i - 1][2], _A[i][2] * d];
+				_B[i].x = _B[i].x * d - _B[i - 1].x;
+				_B[i].y = _B[i].y * d - _B[i - 1].y;
+
+				_A[i][2] /= _A[i][1];
+				_B[i].x /= _A[i][1];
+				_B[i].y /= _A[i][1];
+				_A[i][1] = 1;
+			}
+
+			_C[num - 1] = {x: _B[num - 1].x, y: _B[num - 1].y};
+			for (j = num - 1; j > 0; j--) {
+				_C[j - 1] = {
+					x: _B[j - 1].x - _A[j - 1][2] * _C[j].x,
+					y: _B[j - 1].y - _A[j - 1][2] * _C[j].y
+				};
+			}
+
+			var out = [];
+			var count = 0;
+			for (var i = 0; i < num - 1; i++) {
+				var a = l[i];
+				var _00 = p[i].x;
+				var _01 = _C[i].x;
+				var _02 = (p[i + 1].x - p[i].x) * 3 / (a * a) - (_C[i + 1].x + 2 * _C[i].x) / a;
+				var _03 = (p[i + 1].x - p[i].x) * (-2 / (a * a * a)) + (_C[i + 1].x + _C[i].x) * (1 / (a * a));
+				var _10 = p[i].y;
+				var _11 = _C[i].y;
+				var _12 = (p[i + 1].y - p[i].y) * 3 / (a * a) - (_C[i + 1].y + 2 * _C[i].y) / a;
+				var _13 = (p[i + 1].y - p[i].y) * (-2 / (a * a * a)) + (_C[i + 1].y + _C[i].y) * (1 / (a * a));
+
+				var t = 0;
+				for (var j = 0; j < interpolate; j++) {
+					out[count] = {
+						x: ((_03 * t + _02) * t + _01) * t + _00,
+						y: ((_13 * t + _12) * t + _11) * t + _10
+					};
+					count++;
+					t += a / interpolate;
+				}
+			}
+			out[count] = {
+				x: p[num - 1].x,
+				y: p[num - 1].y
+			};
+
+			return out;
+		}
+
+	}
+
+}
+

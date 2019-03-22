@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Bench2d</title>
+	<!-- Define the viewport -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=0, target-densitydpi=device-dpi">
+	<!-- iOS helper -->
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<style>
+		body { line-height: 200%; }
+	</style>
+</head>
+
+<body>
+	<meta charset="utf-8">
+	<div>計算を開始しました。終了するまでお待ちください。</div>
+
+	<div id='echo'></div>
+
+	<script>
+		function print(msg) {
+			var echo = document.getElementById('echo');
+			echo.innerHTML += msg + '<br>' + "<a href='../index.html'>戻る</a>"
+			;
+		}
+
+		window.onload = function () {
+			setTimeout("bench_start()", 500);
+		}
+
+	</script>
+
+	<script src="Box2dWeb-2.1a.3/Box2dWeb-2.1.a.3.min.js"></script>
+	<script src='bench2d.js'></script>
+	<script src='bench2d-run.js'></script>
+</body>
+</html>
+

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+		<title>Away3D TypeScript Sample</title>
+
+		<!-- ライブラリ読み込み -->
+		<script src="../libs/swfobject.js"></script>
+		<script src="../libs/awayjs-core.next.min.js"></script>
+		<script src="../libs/stagegl-core.next.js"></script>
+		<script src="../libs/stagegl-extensions.next.js"></script>
+
+		<!-- 自作コードの読み込み(オリジナルは TypeScript) -->
+		<script src="TouchManager.js"></script>
+		<script src="RgbDecomposerDemo.js"></script>
+
+		<!-- テストコード -->
+		<script>
+			// ページが読み込まれてから実行します
+			window.addEventListener("load", function () {
+				var rgbDecomposer = new demo.RgbDecomposer();
+				rgbDecomposer.addEventListener("complete", function () {
+					// 分解したBitmapDataを取得
+					var arr = rgbDecomposer.getResult();
+
+					// 3DをFlash Playerで起動
+					var world = new demo.World(arr, "flash");
+				});
+				rgbDecomposer.load("../imgs/nature_1024x512.jpg");
+			});
+		</script>
+
+		<!-- CSSを調整 -->
+		<style>
+			body {
+				cursor: move;
+				overflow: hidden;
+			}
+		</style>
+	</head>
+</html>

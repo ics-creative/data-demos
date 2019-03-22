@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>スマートフォンパフォーマンス検証 - ICS LAB</title>
+	<!-- Define the viewport -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=0, target-densitydpi=device-dpi">
+	<!-- iOS helper -->
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<style>
+		body { line-height: 200%; }
+	</style>
+</head>
+
+<body>
+	<h1>スマートフォンパフォーマンス検証</h1>
+
+	<h2>描画テスト</h2>
+	<ul>
+
+		<li>
+			<a href="canvas/canvas.html">(1) canvas</a>
+		</li>
+		<li>
+			<a href="translate2d/translate2d.html">(2) transform (2D)</a>
+		</li>
+		<li>
+			<a href="translate3d/translate3d.html">(3) transform (3D)</a>
+		</li>
+	</ul>
+	<p>※描画テストについては止まるまで動かしておけばアラートで結果が表示されます。</p>
+
+	<h3>描画テストの概要</h3>
+	<ul>
+		<li>あるフレームレートを維持できる表示オブジェクトの最大個数を測定することが目的</li>
+		<li>位置・スケール・回転をオブジェクト毎にランダムに設定</li>
+		<li>時間経過によりオブジェクトの移動が発生</li>
+		<li>時間経過とともにオブジェクト数を増加</li>
+		<li>直前3回のフレームレートの平均が24fpsを下回った段階での、表示されているオブジェクトの個数がスコア</li>
+		<li>個数が大きいほど描画パフォーマンスが高いことを示す</li>
+	</ul>
+
+	<h2>計算テスト</h2>
+	<ul>
+		<!-- https://github.com/joelgwebber/bench2d -->
+		<li><a href="box2d_bench/bench2d-run.html">JavaScript数値計算(Box2D)</a></li>
+	</ul>
+	<p>※計測完了まで時間がかかりますが、計算後のスコアはHTML上に表示されます。
+
+	<h3>計算テストの概要</h3>
+	<ul>
+		<li>複雑な数値計算における処理の速さを測定することが目的</li>
+		<li>Box2Dのstep計算(32回実施)における処理時間の平均値(ミリ秒)がスコア</li>
+		<li>Box2Dのstep計算(32回実施)におけるバラつき(標準偏差)がスコア</li>
+		<li>スコア(平均値(ミリ秒))が小さいほど計算が高速であることを示す</li>
+		<li>スコア(標準偏差)が小さいほど安定性が高いことを示す</li>
+	</ul>
+
+	<h2>パフォーマンステスト時の条件</h2>
+	<ul>
+		<li>デバイスは実験前に再起動をし、再起動直後に検証ブラウザを起動し計測する</li>
+		<li>他のアプリケーションは起動しない</li>
+		<li>テスト時にはブラウザで検証ページを除き別のページをバックグランドで(タブで)開かない</li>
+		<li>ネットワークの接続はWiFiを利用する</li>
+		<li>ディスプレイの消灯時間は「なし」もしくは「5分以上」に設定する</li>
+		<li>省電力モード等の設定があれば、省電力モードは解除した状態とする</li>
+		<li>バッテリー駆動とし、USB充電等の接続は行わない</li>
+		<li>テストは3回実施し、スコアはその平均値を記録する</li>
+		<li>デバイスは縦表示(ポートレート)とする</li>
+	</ul>
+
+	<h2>ソースファイル</h2>
+	<ul>
+		<li><a href="http://ics-web.jp/lab-data/130527_html5_sp/src.zip">ソースファイルのダウンロード(ZIP)</a></li>
+	</ul>
+
+</body>
+</html>
+

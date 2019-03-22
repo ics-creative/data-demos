@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=1024,initial-scale=1.0">
+		<title>CreateJS Drawing Sample</title>
+		<link href="style.css" rel="stylesheet" />
+		<script src="http://code.createjs.com/createjs-2014.12.12.min.js"></script>
+		<script>
+			var stage;
+			var shape;
+			var points = []; // マウス座標管理
+			var hue = 0; // 色相
+			/** 初期化 */
+			function init() {
+				stage = new createjs.Stage("myCanvas");
+				// 自動的な画面クリアを無効にする
+				stage.autoClear = false;
+				// 描画用シェイプを作成
+				shape = new createjs.Shape();
+				stage.addChild(shape);
+
+				createjs.Ticker.on("tick", onTick);
+			}
+			/** フレームごとに処理 */
+			function onTick() {
+				// シェイプの描画をクリアする
+				shape.graphics.clear();
+
+				points.unshift({
+					x:stage.mouseX,
+					y:stage.mouseY
+				});
+				// 計算には3点以上の存在が必要
+				if (points.length > 2) {
+					// マウスの軌跡を変数に保存
+					var p0x = points[0].x; // 1点目
+					var p0y = points[0].y;
+					var p1x = points[1].x; // 2点目
+					var p1y = points[1].y;
+					var p2x = points[2].x; // 3点目
+					var p2y = points[2].y;
+					// カーブ用の頂点を割り出す
+					var startX = (p2x + p1x) / 2;
+					var startY = (p2y + p1y) / 2;
+					var endX = (p0x + p1x) / 2;
+					var endY = (p0y + p1y) / 2;
+					// 色
+					var color = "hsl(" + hue + ", 80%, 60%)";
+					// 曲線を描く
+					shape.graphics
+							.setStrokeStyle(5)
+							.beginStroke(color)
+							.moveTo(startX, startY)
+							.curveTo(p1x, p1y, endX, endY);
+				}
+
+				// 残像効果
+				var ctx = stage.canvas.getContext("2d");
+				// 2%だけ画面を黒く塗る
+				ctx.fillStyle = "rgba(0, 0, 0, 0.02)";
+				ctx.fillRect(0, 0, 1024, 768);
+
+				// マウスの軌跡の描画を確定する
+				stage.update();
+				// 色相をずらす
+				hue++;
+			}
+		</script>
+	</head>
+	<body onload="init()">
+		<canvas id="myCanvas" width="1024" height="768"></canvas>
+	</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+		<title>Three.js Coverflow Sample - ICS LAB</title>
+		<!-- ライブラリ読み込み -->
+		<script src="three.min.js"></script>
+		<script src="//code.createjs.com/createjs-2013.12.12.min.js"></script>
+
+		<!-- 自作コードの読み込み(オリジナルは TypeScript) -->
+		<script src="TouchManager.js"></script>
+		<script src="CoverFlowApp.js"></script>
+
+		<!-- テストコード -->
+		<script>
+			// ページが読み込まれてから実行します
+			window.addEventListener("load", function () {
+				new demo.CoverFlowApp();
+			});
+		</script>
+
+		<!-- CSSを調整 -->
+		<link rel="stylesheet" href="style.css">
+	</head>
+	<body>
+	<div id="container"></div>
+	<div id="rangeSliderContainer">
+		<input type="range" id="rangeSlider" min="0" max="1" step="0.01">
+	</div>
+	</body>
+</html>

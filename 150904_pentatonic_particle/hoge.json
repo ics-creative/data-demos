@@ -1,0 +1,11 @@
+{
+ src: "soundFile.ogg",
+  data:{ 
+  channels: 50,
+  audioSprite:
+  [ 
+{id: "se_0", startTime: 0, duration: 200},
+ {id: "se_1", startTime: 500, duration: 210}, 
+{id: "se_2", startTime: 1000, duration: 200} 
+] 
+}

@@ -1,0 +1,252 @@
+@charset "UTF-8";
+/* --------------------------------------
+   リセットCSS
+  -------------------------------------- */
+*:not(input) {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    vertical-align: baseline;
+    background: transparent;
+}
+
+h1, h2 {
+    font-size: 100%;
+    font-weight: normal;
+}
+
+.clearfix:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+}
+
+/* --------------------------------------
+   Canvasタグではカーソルの形状を変えている
+  -------------------------------------- */
+
+canvas {
+	cursor: crosshair;
+}
+
+/* --------------------------------------
+   画面パーツのスタイル設定
+  -------------------------------------- */
+html, body {
+    width: 100%;
+    background-color: #535353 !important;
+}
+
+body {
+    padding: 20px 0 0;
+    color: #d0d0d0;
+    font-family: "Meiryo", "MS PGothic", "Hiragino Kaku Gothic Pro", "Osaka", sans-serif;
+    font-size: 14px;
+    line-height: 1.9em;
+}
+
+#main {
+    width: 962px;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0px 0px 8.64px 0.36px rgba(0, 0, 0, 0.373);
+    border-radius: 5px;
+}
+
+#main .inner {
+    width: 874px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#header h1 {
+    padding-top: 2px;
+    border: 1px solid #363636;
+    border-radius: 5px 5px 0 0;
+    background-color: #535353;
+    line-height: 20px;
+    font-size: 14px;
+    color: #e3e3e3;
+    text-align: center;
+    text-shadow: -1px -1px 0 #444;
+    background: linear-gradient(to bottom, #727272 0%, #535353 100%);
+}
+
+#settingArea {
+    background-color: #535353;
+    border: 1px solid #363636;
+    border-top: none;
+}
+
+#settingArea #settingAreaInner {
+    border-top: 1px solid #6a6a6a;
+}
+
+#settingArea .inner {
+    padding-top: 5px;
+    padding-bottom: 4px;
+}
+
+#settingArea .inner > div {
+    float: left;
+    margin-right: 35px;
+}
+
+#settingArea .inner > div h2,
+#settingArea .inner > div div, 
+#settingArea .inner > div input, 
+#settingArea .inner > div p {
+    float: left;
+}
+
+#settingArea .inner > div h2, 
+#settingArea .inner > div p {
+    font-size: 13px;
+    line-height: 25px;
+    color: #e3e3e3;
+    text-shadow: -1px -1px 0 #5b5b5b;
+}
+
+#settingArea h2 {
+    margin-right: 10px;
+}
+
+#settingArea #slider {
+    margin-top: 7px;
+    margin-right: 10px;
+    width: 120px;
+    height: 10px;
+    font-size: 10px;
+    float: left;
+    cursor: pointer;
+}
+
+#settingArea p#sizeText {
+    width: 30px;
+}
+
+#settingArea #resetButtonContainer {
+    float: right;
+    margin-right: 0;
+}
+
+#settingArea #saveButtonContainer {
+    float: right;
+    margin-right: 10px;
+}
+
+.button {
+    height: 21px;
+    width: 50px;
+    border: 1px solid #363636;
+    background: linear-gradient(to bottom, #747474 1%, #626262 100%);
+    cursor: pointer;
+}
+
+.button:hover {
+    background: linear-gradient(to bottom, #9a9a9a 1%, #717171 100%);
+}
+
+.button:active {
+    background: linear-gradient(to bottom, #717171 1%, #9a9a9a 100%);
+}
+
+.button p {
+    width: 100%;
+    text-align: center;
+}
+
+#shapeContainer {
+    background-color: #303030;
+    border-left: 1px solid #363636;
+    border-right: 1px solid #363636;
+    line-height: 0;
+}
+
+#footer {
+    background-color: #3a3a3a;
+    border: 1px solid #363636;
+    height: 15px;
+}
+
+/* --------------------------------------
+   カラーピッカーの為のカスタマイズ
+  -------------------------------------- */
+.sp-container {
+    background-color: #535353;
+    border: 1px solid #363636;
+    -webkit-box-shadow: 0px 0px 8.64px 0.36px rgba(0, 0, 0, 0.373);
+    -moz-box-shadow: 0px 0px 8.64px 0.36px rgba(0, 0, 0, 0.373);
+    box-shadow: 0px 0px 8.64px 0.36px rgba(0, 0, 0, 0.373);
+}
+
+.sp-picker-container {
+    border: none;
+    border-left: 1px solid #6a6a6a;
+}
+
+.sp-replacer {
+    border: #363636 1px solid !important;
+    padding: 0 2px 0 0;
+    background: #747474;
+    background: -moz-linear-gradient(top, #747474 1%, #626262 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(1%, #747474), color-stop(100%, #626262));
+    background: -webkit-linear-gradient(top, #747474 1%, #626262 100%);
+    background: -o-linear-gradient(top, #747474 1%, #626262 100%);
+    background: -ms-linear-gradient(top, #747474 1%, #626262 100%);
+    background: linear-gradient(to bottom, #747474 1%, #626262 100%);
+}
+
+.sp-replacer:hover {
+    background: #9a9a9a;
+    background: -moz-linear-gradient(top, #9a9a9a 1%, #717171 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(1%, #9a9a9a), color-stop(100%, #717171));
+    background: -webkit-linear-gradient(top, #9a9a9a 1%, #717171 100%);
+    background: -o-linear-gradient(top, #9a9a9a 1%, #717171 100%);
+    background: -ms-linear-gradient(top, #9a9a9a 1%, #717171 100%);
+    background: linear-gradient(to bottom, #9a9a9a 1%, #717171 100%);
+}
+
+.sp-replacer:active {
+    background: #9a9a9a;
+    background: -moz-linear-gradient(top, #717171 1%, #9a9a9a 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(1%, #717171), color-stop(100%, #9a9a9a));
+    background: -webkit-linear-gradient(top, #717171 1%, #9a9a9a 100%);
+    background: -o-linear-gradient(top, #717171 1%, #9a9a9a 100%);
+    background: -ms-linear-gradient(top, #717171 1%, #9a9a9a 100%);
+    background: linear-gradient(to bottom, #717171 1%, #9a9a9a 100%);
+}
+
+.sp-preview {
+    margin-right: 2px;
+    border: none;
+    border-right: 1px solid #363636;
+    height: 21px;
+}
+
+.sp-dd {
+    padding-top: 3px;
+    color: #e3e3e3;
+    text-shadow: -1px -1px 0 #5b5b5b;
+    -moz-transform: scale(0.8, 0.8);
+    -webkit-transform: scale(0.8, 0.8);
+    -o-transform: scale(0.8, 0.8);
+    -ms-transform: scale(0.8, 0.8);
+    transform: scale(0.8, 0.8);
+}
+
+.sp-replacer:hover .sp-dd, .sp-replacer.sp-active .sp-dd {
+    color: #e3e3e3;
+}
+
+.sp-cf.sp-palette-row {
+    width: 62px;
+}
+
+.sp-palette-container {
+    border-right: 1px solid #363636;
+}

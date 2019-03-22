@@ -1,0 +1,44 @@
+#mathBox {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 420px;
+    height: 420px;
+    margin-left: -210px;
+    margin-top: -210px;
+}
+
+#mathBox ul li {
+    position: absolute;
+    background-color: #ff5c5c;
+    -moz-border-radius: 7px;
+    -webkit-border-radius: 7px;
+    border-radius: 7px;
+    width: 14px;
+    height: 14px;
+}
+
+/* CSSコード */
+li:nth-child(1) { /* １つ目の点 */
+    -webkit-transform: translate(0px, 0px); /* 横0px,縦0pxの位置に配置 */
+    transform: translate(0px, 0px); /* 横0px,縦0pxの位置に配置 */
+}
+li:nth-child(2) { /* 2つ目の点 */
+    -webkit-transform: translate(100px, 100px); /* 横100px,縦100pxの位置に配置 */
+    transform: translate(100px, 100px); /* 横100px,縦100pxの位置に配置 */
+}
+
+li:nth-child(3) { /* 3つ目の点 */
+    -webkit-transform: translate(200px, 200px);
+    transform: translate(200px, 200px);
+}
+
+#mathBox ul li:nth-child(4) {
+    -webkit-transform: translate(300px, 300px);
+    transform: translate(300px, 300px);
+}
+
+#mathBox ul li:nth-child(5) {
+    -webkit-transform: translate(400px, 400px);
+    transform: translate(400px, 400px);
+}

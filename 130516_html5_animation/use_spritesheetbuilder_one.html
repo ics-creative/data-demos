@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>HTML5 Performance Test</title>
+</head>
+<body style="background:#000;">
+	<canvas id="gameCanvas" width="800" height="600" style="background:#FFF"></canvas>
+	<p id="fpsCounter" style="color:#f00; position:absolute; top:10px; left:10px; font-size:64px; margin:0; background:#000;">-fps</p>
+	<script src="//code.createjs.com/createjs-2013.05.14.min.js"></script>
+	<script src="//code.createjs.com/movieclip-0.6.1.min.js"></script>
+	<script src="fla/assets.js"></script>
+	<script>
+		// our game init logic:
+		(function () {
+			var stage = new createjs.Stage("gameCanvas");
+			var canvasW = stage.canvas.width;
+			var canvasH = stage.canvas.height;
+			var MAX = 20;
+			var players = [];
+			var ITEM_HEIGHT = 120;
+
+			function init() {
+				builder = new createjs.SpriteSheetBuilder();
+				builder.addEventListener("complete", handleBuildComplete, this);
+
+				// add all of the symbols we want in our spritesheet, and specify scales:
+				builder.addMovieClip(new lib.Dragon, null, 1.0);
+
+				// generate the sprite sheet asynchronously (in the background),
+				// using only ~20% of available CPU so our UI remains responsive:
+				builder.buildAsync(0.2);
+			}
+
+			function handleBuildComplete() {
+				spriteSheet = builder.spriteSheet;
+				builder = null;
+				startGame();
+			}
+
+			function startGame() {
+
+				var item = new createjs.BitmapAnimation(spriteSheet);
+				item.gotoAndPlay(60 * Math.random() >> 0);
+				item.set({x: canvasW / 2 >> 0, y: 500});
+				stage.addChild(item);
+
+				createjs.Ticker.useRAF = true;
+				createjs.Ticker.setFPS(60);
+				createjs.Ticker.addEventListener("tick", handleLoop);
+			}
+
+			function handleLoop() {
+				stage.update();
+
+				document.getElementById("fpsCounter").innerHTML = Math.round(createjs.Ticker.getMeasuredFPS()) + "fps";
+			}
+
+			init();
+		})();
+	</script>
+</body>
+</html>

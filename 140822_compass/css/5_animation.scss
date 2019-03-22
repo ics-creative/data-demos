@@ -1,0 +1,53 @@
+//-------------------------------------------------
+//  Compassの設定
+//-------------------------------------------------
+// コンパスのインポート
+@import "compass";
+
+//-------------------------------------------------
+//  基本スタイル設定
+//-------------------------------------------------
+// #mathBoxの辺の長さ
+$boxWidth: 300;
+// 点の横幅
+$pointWidth: 200;
+#mathBox {
+  position: relative;
+  width: $boxWidth + px;
+  height: $boxWidth + px;
+  margin-left: auto;
+  margin-right: auto;
+  ul {
+    li {
+      position: absolute;
+      background-color: hsl(0, 100, 68);
+      @include border-radius($pointWidth/2 + px);
+      width: $pointWidth + px;
+      height: $pointWidth + px;
+      left: 50%;
+      top: 50%;
+      margin-left: -$pointWidth / 2 + px;
+      margin-top: -$pointWidth / 2 + px;
+
+      // カラーアニメーションの設定
+      @include animation(colorAnimation 2s linear infinite);
+    }
+  }
+}
+
+//-------------------------------------------------
+//  カラーアニメーションのキーフレーム
+//-------------------------------------------------
+@include keyframes("colorAnimation") {
+  // キーフレームの長さ-1
+  $keyFrameLength:4;
+  @for $i from 0 through $keyFrameLength {
+    // 0%, 25%, 50%,.. と25%ごとにキーフレームを設定。
+    // キーフレームはインターポレーションを使う。
+    #{(100 / $keyFrameLength) * $i + "%"} {
+      $h: (360 / $keyFrameLength) * $i;
+      $color: hsl($h, 100, 68);
+      background-color: $color;
+    }
+  }
+}

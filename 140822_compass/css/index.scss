@@ -1,0 +1,217 @@
+//-------------------------------------------------
+//  Compassの設定
+//-------------------------------------------------
+// Compassのインポート
+@import "compass";
+
+// Webkit系ブラウザ以外のベンダープレフィックスを付加しない設定
+$supported-browsers: reject(browsers(),
+  blackberry,
+  android-chrome,
+  firefox,
+  android-firefox,
+  ie,
+  ie-mobile,
+  opera,
+  opera-mini,
+  opera-mobile
+);
+
+//-------------------------------------------------
+//  基本スタイル設定
+//-------------------------------------------------
+// #mathBoxの辺の長さ
+$boxWidth: 600;
+// 点の横幅
+$pointWidth: 14;
+// 点の色のアニメーションのduration
+$colorAnimationDuration: 2;
+
+body {
+  // 画面にカーソルがあたった時のマウス画像をポインターに
+  cursor: pointer;
+}
+
+#mathBox {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: $boxWidth + px;
+  height: $boxWidth + px;
+  margin-left: - $boxWidth / 2 + px;
+  margin-top: - $boxWidth / 2+ px;
+  // #mathBoxを回転アニメーションさせる。
+  @include animation(mathBoxAnimation 20s linear infinite);
+
+  ul {
+    li {
+      position: absolute;
+      // 円を描くために角丸を使用
+      @include border-radius($pointWidth/2 + px);
+      width: $pointWidth + px;
+      height: $pointWidth + px;
+      // スタート地点をbox中央に。
+      $x: $boxWidth / 2 + px;
+      $y: $boxWidth / 2 + px;
+      @include translate($x, $y);
+      // 点の色を変更するアニメーションの基本設定。$colorAnimationDurationかけて色が一周変化する
+      @include animation(colorAnimation $colorAnimationDuration + s linear infinite);
+      // 点の位置を変更するアニメーションの基本設定
+      @include transition(all 1s 0s cubic-bezier(1, 0, 0, 1));
+    }
+  }
+}
+
+//プロットする点の数
+$pointNum: 196;
+// 円やハイポロイドにおいて、1プロットあたりに回転する角の量
+$singleRadian: 3 * (360 / $pointNum) * (pi() / 180);
+#mathBox {
+  li {
+    // $pointNum個の点をプロット
+    @for $i from 1 through $pointNum {
+      &:nth-child(#{$i}) {
+        // 点の色のアニメーションのdelayを設定。$colorAnimationDuration * 3 / $pointNumずつずらす。
+        $colorAnimationDelay: ($colorAnimationDuration * 3 / $pointNum) * $i + s;
+        @include animation-delay($colorAnimationDelay);
+        // 点の位置移動アニメーションのdelayを設定
+        $durationDelay: 0.006 * $i + s;
+        @include transition-delay(0.006 * $i + s);
+      }
+    }
+  }
+
+  //-------------------------------------------------
+  //  ハイポトロコイド曲線1
+  //-------------------------------------------------
+  &.type1 {
+    li {
+      @for $t from 1 through $pointNum {
+        &:nth-child(#{$t}) {
+          $angle: $singleRadian * $t;
+          $rc: 350;
+          $rm: 150;
+          $rd: 250;
+          // 曲線の描画
+          $x: $boxWidth / 2 + ($rc - $rm) * cos($angle) + $rd * cos(($rc - $rm) * $angle / $rm) + px;
+          $y: $boxWidth / 2 + ($rc - $rm) * sin($angle) - $rd * sin(($rc - $rm) * $angle / $rm) + px;
+          @include translate($x, $y); // $x,$yの位置に点をプロット
+        }
+      }
+    }
+  }
+
+  //-------------------------------------------------
+  //  螺旋
+  //-------------------------------------------------
+  &.type2 {
+    li {
+      // 円の半径
+      $r: 400;
+      @for $t from 1 through $pointNum {
+        &:nth-child(#{$t}) {
+          $r: $r * 0.99; // 円の半径を0.99倍ずつしていく
+          $angle: $singleRadian * $t;
+          // 曲線の描画
+          $x: $boxWidth / 2 + $r * cos($angle) + px;
+          $y: $boxWidth / 2 + $r * sin($angle) + px;
+          @include translate($x, $y); // $x,$yの位置に点をプロット
+        }
+      }
+    }
+  }
+
+  //-------------------------------------------------
+  //  ハイポトロコイド曲線2(内サイクロイド)
+  //-------------------------------------------------
+  &.type3 {
+    li {
+      @for $t from 1 through $pointNum {
+        &:nth-child(#{$t}) {
+          $angle: $singleRadian * $t;
+          // 曲線の描画
+          $rc: 250;
+          $rm: 150;
+          $rd: 250;
+          $x: $boxWidth / 2 + ($rc - $rm) * cos($angle) + $rd * cos(($rc - $rm) * $angle / $rm) + px;
+          $y: $boxWidth / 2 + ($rc - $rm) * sin($angle) - $rd * sin(($rc - $rm) * $angle / $rm) + px;
+          @include translate($x, $y); // $x,$yの位置に点をプロット
+        }
+      }
+    }
+  }
+
+  //-------------------------------------------------
+  //  矩形
+  //-------------------------------------------------
+  &.type4 {
+    $offsetY: 0;
+    $j: 0;
+    $zoom: 1.7; // 点の拡大率
+    $zoomWidth: $pointWidth * $zoom;
+    // 矩形の1辺あたりの点の数。
+    // sqrt($num)：$numの平方根
+    // round($num):$numの四捨五入
+    $threshold: round(sqrt($pointNum));
+    $mathBoxWidth: $zoomWidth * $threshold;
+
+    li {
+      @for $i from 1 through $pointNum {
+        $x: $zoomWidth * $j + $boxWidth / 4 - $mathBoxWidth / 2 + px;
+        $y: $offsetY + $boxWidth / 4 - $mathBoxWidth / 2 + px;
+        &:nth-child(#{$i}) {
+          @include border-radius(0);  // 角丸を無効にする
+          @include simple-transform($zoom, 0, $x, $y); // $zoom倍の大きさにして、$x,$yの位置に点をプロット
+        }
+
+        @if ($j >= $threshold - 1) {
+          $j: 0;
+          $offsetY: $offsetY + $zoomWidth;
+        } @else {
+          $j: $j+1;
+        }
+      }
+    }
+  }
+}
+
+//-------------------------------------------------
+//  カラーアニメーションのキーフレーム
+//-------------------------------------------------
+@include keyframes("colorAnimation") {
+  // キーフレームの長さ-1
+  $keyFrameLength:4;
+  @for $i from 0 through $keyFrameLength {
+    // 0%, 25%, 50%,.. と25%ごとにキーフレームを設定。
+    // キーフレームはインターポレーションを使う。
+    #{(100 / $keyFrameLength) * $i + "%"} {
+      $h: (360 / $keyFrameLength) * $i;
+      $color: hsl($h, 100, 68);
+      background-color: $color;
+    }
+  }
+}
+
+//-------------------------------------------------
+//  #mathBoxの回転アニメーションのキーフレーム
+//-------------------------------------------------
+@include keyframes("mathBoxAnimation") {
+  0% {
+    @include rotate(0deg);
+  }
+  100% {
+    @include rotate(360deg);
+  }
+}
+
+//-------------------------------------------------
+//  ナビゲーションの設定
+//-------------------------------------------------
+nav {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255,255,255,0.95);
+  padding: 10px 20px;
+}
+

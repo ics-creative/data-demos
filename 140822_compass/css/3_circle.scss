@@ -1,0 +1,51 @@
+//-------------------------------------------------
+//  Compassの設定
+//-------------------------------------------------
+// コンパスのインポート
+@import "compass";
+
+//-------------------------------------------------
+//  基本スタイル設定
+//-------------------------------------------------
+// #mathBoxの辺の長さ
+$boxWidth: 300;
+// 点の横幅
+$pointWidth: 5;
+#mathBox {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: $boxWidth + px;
+  height: $boxWidth + px;
+  margin-left: - $boxWidth / 2 + px;
+  margin-top: - $boxWidth / 2+ px;
+  ul {
+    li {
+      position: absolute;
+      background-color: hsl(0, 100, 68);
+      @include border-radius($pointWidth/2 + px);
+      width: $pointWidth + px;
+      height: $pointWidth + px;
+      left: $boxWidth / 2 + px;
+      top: $boxWidth / 2 + px;
+    }
+  }
+}
+
+//-------------------------------------------------
+//  円の描画
+//-------------------------------------------------
+#mathBox {
+  li {
+    $r: 100; //円の半径
+    @for $t from 1 through 100 {
+      &:nth-child(#{$t}) {
+        // 100個の点でちょうど360度分の円がプロットされるように回転角$angleを動かす
+        $angle: (360 / 100) * (pi() / 180) * $t;
+        $x: $r * cos($angle) + px;
+        $y: $r * sin($angle) + px;
+        @include translate($x, $y); // $x,$yの位置に点をプロット
+      }
+    }
+  }
+}
