@@ -1,0 +1,175 @@
+﻿<!DOCTYPE html>
+<html>
+<!-- saved from url=(0014)about:internet -->
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="google" value="notranslate"/>
+  <title>Blur Light using CreateJS | ICS LAB</title>
+
+  <link href="../commons/demo.css" rel="stylesheet" type="text/css">
+
+  <!-- Typekit -->
+  <script type="text/javascript" src="http://use.typekit.com/kut8wlc.js"></script>
+  <script type="text/javascript">try {
+    Typekit.load();
+  } catch (e) {
+  }</script>
+
+  <!-- Google Analytics -->
+  <script type="text/javascript">//<![CDATA[
+  // Google Analytics
+  var _gaq = _gaq || [];
+  _gaq.push(["_setAccount", "UA-34243464-1"]);
+  _gaq.push(["_trackPageview"]);
+  (function () {
+    var ga = document.createElement("script");
+    ga.type = "text/javascript";
+    ga.async = true;
+    ga.src = ("https:" == document.location.protocol ? "https://ssl" : "http://www") + ".google-analytics.com/ga.js";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(ga, s);
+  })();
+  //]]></script>
+
+
+  <script src="https://code.createjs.com/createjs-2013.02.12.min.js"></script>
+  <script src="easeljs/filters/BoxBlurFilter.js"></script>
+  <script>
+
+    var stage;
+    var mouseX = 480;
+    var mouseY = 270;
+    var circlesPool = [];
+
+    function init() {
+      // canvasの参照を取得します
+      var canvas = document.getElementById("myCanvas");
+
+      // Stageオブジェクトを作成。表示リストのルートになります。
+      stage = new createjs.Stage(canvas);
+
+      // enable touch action
+      if (createjs.Touch.isSupported()) {
+        createjs.Touch.enable(stage);
+      }
+
+      // マウス座標の取得
+      stage.onMouseMove = onMouseMove;
+
+      createCirclePool();
+
+      // エンターフレーム
+      createjs.Ticker.setFPS(60);
+      createjs.Ticker.useRAF = true;
+      createjs.Ticker.addListener(window);
+    }
+
+    function onMouseMove(event) {
+      // マウス座標のアップデート
+      mouseX = event.stageX;
+      mouseY = event.stageY;
+    }
+
+    function createCirclePool() {
+
+      for (var i = 0; i < 100; i++) {
+        // ぼかしフィルターを作成(ぼかしの適用量はランダム)
+        var blurVal = [2, 4, 8, 16, 32][Math.floor(Math.random() * 5)];
+        var blurFilter = new createjs.BoxBlurFilter(blurVal, blurVal, 2);
+        var margins = blurFilter.getBounds(); // フィルターの余白を取得
+
+        // 円を作成
+        var shape = new createjs.Shape();
+        var size = Math.random() * 40 + 10;
+        shape.graphics.beginFill("hsl(" + (i * 3) + ", 50%, 50%)"); // 赤色で描画するように設定
+        shape.graphics.drawCircle(0, 0, size); //半径100pxの円を描画
+
+
+        // フィルター
+        shape.filters = [blurFilter];
+        shape.cache(-size + margins.x, -size + margins.y, size * 2 + margins.width, size * 2 + margins.height);
+        // ブレンドモード (設定すると見栄えがいいものの、特定のブラウザでは処理負荷が増大します)
+        shape.compositeOperation = "lighter";
+
+        shape.isUseObject = false; // 動的プロパティ
+
+        circlesPool[i] = shape;
+      }
+    }
+
+    function tick() {
+      createCircle(); // 円を作成
+      updateCircles(); // シェイプのアップデート
+      stage.update(); // 描画更新
+    }
+
+    function createCircle() {
+      var shape = getPool();
+      if (shape) {
+        // リセット
+        // 座標
+        shape.x = mouseX;
+        shape.y = mouseY;
+        // 任意の速度プロパティーを追加
+        shape.vx = Math.random() - 0.5;
+        shape.vy = -2 * Math.random();
+        shape.alpha = 1;
+
+        // 画面に追加
+        stage.addChild(shape); // 表示リストに追加
+
+        shape.isUseObject = true; // 動的プロパティ
+      }
+    }
+
+    function getPool() {
+      for (var i = 0; i < circlesPool.length; i++) {
+        if (circlesPool[i].isUseObject == false) {
+          console.log(i);
+          return circlesPool[i];
+        }
+      }
+    }
+
+    function updateCircles() {
+      // 配列内のシェイプすべてをアップデート
+      for (var i = 0; i < circlesPool.length; i++) {
+        var shape = circlesPool[i];
+        if (shape.isUseObject == true) {
+          shape.x += shape.vx; // 速度の反映
+          shape.y += shape.vy;
+          shape.alpha -= 0.01; // アルファを下げる
+          // 透明になったら削除
+          if (shape.alpha <= 0) {
+            stage.removeChild(shape); // 画面から削除
+            shape.isUseObject = false; // 動的プロパティ
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body onload="init();">
+
+<div id="container">
+  <div id="flashContent">
+    <canvas id="myCanvas" width="980" height="580" style="background-color: #000; border:2px #000 solid;"></canvas>
+  </div>
+  <h2>Blur Light (HTML5)</h2>
+  <p class="workDate">Feb. 2013</p>
+  <h3>Spec</h3>
+  <ul>
+    <li>This is HTML5 Canvas contents.</li>
+    <li>Using CreateJS Suite.</li>
+  </ul>
+  <h3>Credit</h3>
+  <ul>
+    <li>Authoring : Yasunobu Ikeda</li>
+  </ul>
+  <p class="back"><a href="https://ics.media/entry/93/">&laquo; Back</a></p>
+</div>
+
+
+</body>
+</html>

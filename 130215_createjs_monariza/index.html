@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <title>CreateJS Sample</title>
+  <script src="js/jquery-1.9.1.js"></script>
+  <script src="js/easeljs-0.5.0.min.js"></script>
+  <script src="js/jquery.transit.min.js"></script>
+  <script type="text/javascript">
+    function init() {
+
+      var layer0 = new createjs.Stage("layer0");
+      var layer1 = new createjs.Stage("layer1");
+      var layer2 = new createjs.Stage("layer2");
+      var layer3 = new createjs.Stage("layer3");
+      var layer4 = new createjs.Stage("layer4");
+      var cache0 = new createjs.Shape();
+      var cache1 = new createjs.Shape();
+      var cache2 = new createjs.Shape();
+      var cache3 = new createjs.Shape();
+      var cache4 = new createjs.Shape();
+      var canvas0 = new createjs.Shape();
+      var canvas1 = new createjs.Shape();
+      var canvas2 = new createjs.Shape();
+      var canvas3 = new createjs.Shape();
+      var canvas4 = new createjs.Shape();
+      var temp0 = new createjs.Shape();
+      var temp1 = new createjs.Shape();
+      var temp2 = new createjs.Shape();
+      var temp3 = new createjs.Shape();
+      var temp4 = new createjs.Shape();
+      var layerList = [layer0, layer1, layer2, layer3, layer4];
+      var cacheList = [cache0, cache1, cache2, cache3, cache4];
+      var canvasList = [cache0, canvas1, canvas2, canvas3, canvas4];
+      var tempList = [temp0, temp1, temp2, temp3, temp4];
+
+      var $layer0 = $("#layer0");
+      var $layer1 = $("#layer1");
+      var $layer2 = $("#layer2");
+      var $layer3 = $("#layer3");
+      var $layer4 = $("#layer4");
+      var $container = $("#container");
+      var $shadow = $("#shadow");
+
+      var mouseX = 0;
+      var mouseY = 0;
+      var dragX = 0;
+      var dragY = 0;
+      var drawX = 0;
+      var drawY = 0;
+      var isDrag = false;
+      var isDraw = false;
+
+      var image = new createjs.Stage("original");
+      image.addChild(new createjs.Bitmap("img/monariza.jpg"));
+
+      var map = new createjs.Stage("map");
+      map.addChild(new createjs.Bitmap("img/map.jpg"));
+
+      var cursor = new createjs.Shape();
+      cursor.graphics.beginFill("#000");
+      cursor.graphics.drawCircle(0, 0, 5);
+
+      temp0.alpha = temp1.alpha = temp2.alpha = temp3.alpha = temp4.alpha = 0.5;
+
+
+      //------------------------------------------------------------------------------------------
+
+
+      $layer0.mouseover(function () {
+        isDraw = true;
+      });
+      $layer0.mouseout(function () {
+        isDraw = false;
+      });
+      $(window).mousemove(function (e) {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+      });
+      $(window).mousedown(function (e) {
+        isDrag = true;
+        isDraw = false;
+        dragX = e.clientX;
+        dragY = e.clientY;
+      });
+      $(window).mouseup(function (e) {
+        isDrag = false;
+        $layer0.stop().transition({rotateX: "0deg", rotateY: "0deg", x: 0, y: 0, scale: 1});
+        $layer1.stop().transition({rotateX: "0deg", rotateY: "0deg", x: 0, y: 0, scale: 1});
+        $layer2.stop().transition({rotateX: "0deg", rotateY: "0deg", x: 0, y: 0, scale: 1});
+        $layer3.stop().transition({rotateX: "0deg", rotateY: "0deg", x: 0, y: 0, scale: 1});
+        $layer4.stop().transition({rotateX: "0deg", rotateY: "0deg", x: 0, y: 0, scale: 1});
+        $shadow.stop().transition({rotateX: "0deg", rotateY: "0deg", x: 0, y: 0, scale: 1});
+        $container.stop().transition({rotateX: "0deg", rotateY: "0deg", x: 0, y: 0, scale: 1});
+      });
+
+
+      //------------------------------------------------------------------------------------------
+
+
+      function onEnterFrame() {
+
+        if (isDraw && !isDrag) {
+          var tx = layer1.mouseX;
+          var ty = layer1.mouseY;
+          drawX += (tx - drawX) / 8;
+          drawY += (ty - drawY) / 8;
+          cursor.x = drawX;
+          cursor.y = drawY;
+
+          var context = image.canvas.getContext("2d");
+          image.update();
+          map.update();
+
+          for (var i = 0; i < 120; i++) {
+            var id;
+            var tx = layer1.mouseX + Math.random() * 120 - 60;
+            var ty = layer1.mouseY + Math.random() * 120 - 60;
+            var size = 5 + Math.random() * 6;
+            var data = context.getImageData(tx, ty, 1, 1).data;
+
+            var mc = map.canvas.getContext("2d").getImageData(tx, ty, 1, 1).data[0];
+            if (mc < 60) id = 4;
+            else if (mc < 110) id = 3;
+            else if (mc < 160) id = 2;
+            else if (mc < 240) id = 1;
+            else id = 0;
+
+            if (mc) {
+              for (var j = 0; j < 5; j++) {
+                if (j >= id) {
+                  var layer = layerList[j];
+                  var canvas = canvasList[j];
+                  var cache = cacheList[j];
+                  var temp = tempList[j];
+                  var color;
+
+                  if (j == id) {
+                    color = createjs.Graphics.getRGB(data[0], data[1], data[2]);
+                  } else {
+                    var r = Math.random();
+                    switch (j) {
+                      case 0:
+                        color = "#e7b64e";
+                        break;
+                      case 1:
+                        color = r < 0.5 ? "#e7b64e" : "#e7b64e";
+                        break;
+                      case 2:
+                        color = r < 0.5 ? "#262721" : "#42412b";
+                        break;
+                      case 3:
+                        color = r < 0.25 ? "#4d522f" : r < 0.5 ? "#353519" : r < 0.75 ? "#606548" : "#3c462a";
+                        break;
+                      case 4:
+                        color = "#000000";
+                        break;
+                    }
+                  }
+
+                  temp.graphics.beginFill(color);
+                  temp.graphics.drawCircle(tx, ty, size);
+                  temp.graphics.endFill();
+                }
+              }
+            }
+          }
+
+          updateLayer(layer0, canvas0, temp0);
+          updateLayer(layer1, canvas1, temp1);
+          updateLayer(layer2, canvas2, temp2);
+          updateLayer(layer3, canvas3, temp3);
+          updateLayer(layer4, canvas4, temp4);
+
+          layer1.update();
+          layer2.update();
+          layer3.update();
+          layer4.update();
+        }
+      }
+
+      setInterval(onEnterFrame, 1000 / 16);
+
+      function updateLayer(layer, canvas, temp) {
+        layer.removeAllChildren();
+        layer.addChild(canvas);
+        layer.addChild(temp);
+        layer.update();
+
+        canvas.graphics.clear();
+        canvas.graphics.beginBitmapFill(layer.canvas);
+        canvas.graphics.drawRect(0, 0, 400, 500);
+        layer.removeAllChildren();
+        layer.addChild(canvas);
+        layer.update();
+
+        temp.graphics.clear();
+      }
+
+
+      //------------------------------------------------------------------------------------------
+
+
+      function onEnterFrame2() {
+        if (isDrag) {
+          var tx = mouseX - dragX;
+          var ty = mouseY - dragY;
+          var rateY = tx / 2600;
+          var rateX = ty / 2600;
+          var scale1 = 1 - Math.abs(rateY) * 0.1;
+          var scale2 = 1 - Math.abs(rateY) * 0.15;
+          var scale3 = 1 - Math.abs(rateY) * 0.2;
+          var pers = "500px";
+          var rotY = (30 * rateY) + "deg";
+          var rotX = (-30 * rateX) + "deg";
+          var sd = 2.5;
+          var dx1 = -40 * rateY * sd;
+          var dx2 = -45 * rateY * sd;
+          var dx3 = -60 * rateY * sd;
+          var dx4 = -70 * rateY * sd;
+          var dy1 = -40 * rateX * sd;
+          var dy2 = -45 * rateX * sd;
+          var dy3 = -60 * rateX * sd;
+          var dy4 = -70 * rateX * sd;
+
+          $layer0.stop().css({perspective: pers, rotateX: rotX, rotateY: rotY, x: dx1 * 0.9, y: dy1 * 0.9});
+          $layer1.stop().css({perspective: pers, rotateX: rotX, rotateY: rotY, x: dx1, y: dy1});
+          $layer2.stop().css({perspective: pers, rotateX: rotX, rotateY: rotY, x: dx2, y: dy2, scale: scale1});
+          $layer3.stop().css({perspective: pers, rotateX: rotX, rotateY: rotY, x: dx4, y: dy4, scale: scale3});
+          $layer4.stop().css({perspective: pers, rotateX: rotX, rotateY: rotY, x: dx4, y: dy4, scale: scale3});
+          $shadow.stop().css({perspective: pers, rotateX: rotX, rotateY: rotY, x: dx4, y: dy4, scale: scale3});
+          $container.stop().css({perspective: pers, rotateX: rotX, rotateY: rotY, x: dx4, y: dy4, scale: scale3});
+        }
+      }
+
+      setInterval(onEnterFrame2, 1000 / 50);
+    }
+  </script>
+  <style>
+    canvas {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin: -250px 0 0 -200px;
+    }
+
+    .drop-shadow {
+      position: relative;
+      width: 45%;
+      padding: 1em;
+      margin: 2em auto 5em;
+      background: #fff;
+      -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 60px rgba(0, 0, 0, 0.1) inset;
+      -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+    }
+
+    .drop-shadow:before,
+    .drop-shadow:after {
+      content: "";
+      position: absolute;
+      z-index: -2;
+      bottom: 15px;
+      left: 10px;
+      width: 50%;
+      height: 20%;
+    }
+
+    .drop-shadow:after {
+      right: 10px;
+      left: auto;
+    }
+
+    .raised {
+      width: auto;
+      right: 10px;
+      left: 10px;
+      bottom: 0;
+      -webkit-box-shadow: 0 8px 12px rgba(0, 0, 0, 0.5);
+      -moz-box-shadow: 0 8px 12px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 8px 12px rgba(0, 0, 0, 0.5);
+    }
+  </style>
+</head>
+<body style="margin: 0; padding:0; background-color:#EEEAE0;" onload="init()">
+<div id="root">
+  <canvas id="original" width="400" height="500" style="display: none;"></canvas>
+  <canvas id="map" width="400" height="500" style="display: none;"></canvas>
+  <div id="shadow" class="drop-shadow raised"
+       style="position:absolute; width:384px; height:485px; top:50%; left:50%; margin:-258px 0 0 -208px;"></div>
+  <div id="container"
+       style="position:absolute; width:400px; height:500px; top:50%; left:50%; margin:-250px 0 0 -200px; background-image:url('img/canvas.jpg');"></div>
+  <canvas id="layer0" width="400" height="500" style="z-index:14;"></canvas>
+  <canvas id="layer1" width="400" height="500" style="z-index:13;"></canvas>
+  <canvas id="layer2" width="400" height="500" style="z-index:12;"></canvas>
+  <canvas id="layer3" width="400" height="500" style="z-index:11;"></canvas>
+  <canvas id="layer4" width="400" height="500" style="z-index:10;"></canvas>
+</div>
+</body>
+</html>
