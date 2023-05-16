@@ -1,25 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=960"/>
-  <title>CreateJS Sample</title>
-  <script src="js/jquery-1.9.1.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=960" />
+  <title>CreateJS Example | ICS</title>
   <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
-  <script src="js/jquery.transit.min.js"></script>
   <script>
-    function init() {
+    window.addEventListener("DOMContentLoaded", init);
 
+    function init() {
       const layer0 = new createjs.Stage("layer0");
       const layer1 = new createjs.Stage("layer1");
       const layer2 = new createjs.Stage("layer2");
       const layer3 = new createjs.Stage("layer3");
       const layer4 = new createjs.Stage("layer4");
-      const cache0 = new createjs.Shape();
-      const cache1 = new createjs.Shape();
-      const cache2 = new createjs.Shape();
-      const cache3 = new createjs.Shape();
-      const cache4 = new createjs.Shape();
       const canvas0 = new createjs.Shape();
       const canvas1 = new createjs.Shape();
       const canvas2 = new createjs.Shape();
@@ -30,18 +24,15 @@
       const temp2 = new createjs.Shape();
       const temp3 = new createjs.Shape();
       const temp4 = new createjs.Shape();
-      const layerList = [layer0, layer1, layer2, layer3, layer4];
-      const cacheList = [cache0, cache1, cache2, cache3, cache4];
-      const canvasList = [cache0, canvas1, canvas2, canvas3, canvas4];
       const tempList = [temp0, temp1, temp2, temp3, temp4];
 
-      const $layer0 = $("#layer0");
-      const $layer1 = $("#layer1");
-      const $layer2 = $("#layer2");
-      const $layer3 = $("#layer3");
-      const $layer4 = $("#layer4");
-      const $container = $("#container");
-      const $shadow = $("#shadow");
+      const elLayer0 = document.querySelector("#layer0");
+      const elLayer1 = document.querySelector("#layer1");
+      const elLayer2 = document.querySelector("#layer2");
+      const elLayer3 = document.querySelector("#layer3");
+      const elLayer4 = document.querySelector("#layer4");
+      const elContainer = document.querySelector("#container");
+      const elShadow = document.querySelector("#shadow");
 
       let mouseX = 0;
       let mouseY = 0;
@@ -50,7 +41,6 @@
       let drawX = 0;
       let drawY = 0;
       let isDrag = false;
-      let isDraw = false;
 
       const image = new createjs.Stage("original");
       image.addChild(new createjs.Bitmap("img/monariza.jpg"));
@@ -64,44 +54,40 @@
 
       temp0.alpha = temp1.alpha = temp2.alpha = temp3.alpha = temp4.alpha = 0.5;
 
-
       //------------------------------------------------------------------------------------------
 
-      $layer0.mouseover(function () {
-        isDraw = true;
-      });
-      $layer0.mouseout(function () {
-        isDraw = false;
-      });
-
-      $(window).mousemove(function (e) {
+      window.addEventListener("pointermove", (e) => {
         mouseX = e.clientX;
         mouseY = e.clientY;
       });
-      $(window).mousedown(function (e) {
+      window.addEventListener("pointerdown", (e) => {
         isDrag = true;
-        isDraw = false;
         dragX = e.clientX;
         dragY = e.clientY;
       });
-      $(window).mouseup(function (e) {
+      window.addEventListener("pointerup", (e) => {
         isDrag = false;
-        $layer0.stop().transition({rotateX: "0deg", rotateY: "0deg", x: 0, y: 0, scale: 1});
-        $layer1.stop().transition({rotateX: "0deg", rotateY: "0deg", x: 0, y: 0, scale: 1});
-        $layer2.stop().transition({rotateX: "0deg", rotateY: "0deg", x: 0, y: 0, scale: 1});
-        $layer3.stop().transition({rotateX: "0deg", rotateY: "0deg", x: 0, y: 0, scale: 1});
-        $layer4.stop().transition({rotateX: "0deg", rotateY: "0deg", x: 0, y: 0, scale: 1});
-        $shadow.stop().transition({rotateX: "0deg", rotateY: "0deg", x: 0, y: 0, scale: 1});
-        $container.stop().transition({rotateX: "0deg", rotateY: "0deg", x: 0, y: 0, scale: 1});
-      });
 
+        elLayer0.style.transform = `rotateX(0deg) rotateY(0deg) translate(0px, 0px) scale(1)`;
+        elLayer1.style.transform = `rotateX(0deg) rotateY(0deg) translate(0px, 0px) scale(1)`;
+        elLayer2.style.transform = `rotateX(0deg) rotateY(0deg) translate(0px, 0px) scale(1)`;
+        elLayer3.style.transform = `rotateX(0deg) rotateY(0deg) translate(0px, 0px) scale(1)`;
+        elLayer4.style.transform = `rotateX(0deg) rotateY(0deg) translate(0px, 0px) scale(1)`;
+        elShadow.style.transform = `rotateX(0deg) rotateY(0deg) translate(0px, 0px) scale(1)`;
+        elContainer.style.transform = `rotateX(0deg) rotateY(0deg) translate(0px, 0px) scale(1)`;
+      });
 
       //------------------------------------------------------------------------------------------
 
-
       function onEnterFrame() {
+        if (layer1.mouseX <= 0 || 400 <= layer1.mouseX) {
+          return;
+        }
+        if (layer1.mouseY <= 0 || 500 <= layer1.mouseY) {
+          return;
+        }
 
-        if (isDraw && !isDrag) {
+        if (!isDrag) {
           const tx = layer1.mouseX;
           const ty = layer1.mouseY;
           drawX += (tx - drawX) / 8;
@@ -115,8 +101,8 @@
 
           for (let i = 0; i < 120; i++) {
             let id;
-            const tx = layer1.mouseX + Math.random() * 120 - 60;
-            const ty = layer1.mouseY + Math.random() * 120 - 60;
+            const tx = layer1.mouseX + (Math.random() - 0.5) * 60;
+            const ty = layer1.mouseY + (Math.random() - 0.5) * 60;
             const size = 5 + Math.random() * 6;
             const data = context.getImageData(tx, ty, 1, 1).data;
 
@@ -130,9 +116,6 @@
             if (mc) {
               for (var j = 0; j < 5; j++) {
                 if (j >= id) {
-                  const layer = layerList[j];
-                  const canvas = canvasList[j];
-                  const cache = cacheList[j];
                   const temp = tempList[j];
                   let color;
 
@@ -180,7 +163,7 @@
         }
       }
 
-      setInterval(onEnterFrame, 1000 / 16);
+      setInterval(onEnterFrame, 1000 / 30);
 
       function updateLayer(layer, canvas, temp) {
         layer.removeAllChildren();
@@ -198,48 +181,46 @@
         temp.graphics.clear();
       }
 
-
       //------------------------------------------------------------------------------------------
 
+      onEnterFrame2();
 
       function onEnterFrame2() {
+        requestAnimationFrame(onEnterFrame2);
         if (isDrag) {
           const tx = mouseX - dragX;
           const ty = mouseY - dragY;
           const rateY = tx / 2600;
           const rateX = ty / 2600;
           const scale1 = 1 - Math.abs(rateY) * 0.1;
-          const scale2 = 1 - Math.abs(rateY) * 0.15;
           const scale3 = 1 - Math.abs(rateY) * 0.2;
-          const pers = "500px";
-          const rotY = (30 * rateY) + "deg";
-          const rotX = (-30 * rateX) + "deg";
+          const rotY = 30 * rateY + "deg";
+          const rotX = -30 * rateX + "deg";
           const sd = 2.5;
           const dx1 = -40 * rateY * sd;
           const dx2 = -45 * rateY * sd;
-          const dx3 = -60 * rateY * sd;
           const dx4 = -70 * rateY * sd;
           const dy1 = -40 * rateX * sd;
           const dy2 = -45 * rateX * sd;
-          const dy3 = -60 * rateX * sd;
           const dy4 = -70 * rateX * sd;
 
-          $layer0.stop().css({perspective: pers, rotateX: rotX, rotateY: rotY, x: dx1 * 0.9, y: dy1 * 0.9});
-          $layer1.stop().css({perspective: pers, rotateX: rotX, rotateY: rotY, x: dx1, y: dy1});
-          $layer2.stop().css({perspective: pers, rotateX: rotX, rotateY: rotY, x: dx2, y: dy2, scale: scale1});
-          $layer3.stop().css({perspective: pers, rotateX: rotX, rotateY: rotY, x: dx4, y: dy4, scale: scale3});
-          $layer4.stop().css({perspective: pers, rotateX: rotX, rotateY: rotY, x: dx4, y: dy4, scale: scale3});
-          $shadow.stop().css({perspective: pers, rotateX: rotX, rotateY: rotY, x: dx4, y: dy4, scale: scale3});
-          $container.stop().css({perspective: pers, rotateX: rotX, rotateY: rotY, x: dx4, y: dy4, scale: scale3});
+          elLayer0.style.transform = `rotateX(${rotX}) rotateY(${rotY}) translate(${dx1 * 0.9}px, ${dy1 * 0.9}px)`;
+          elLayer1.style.transform = `rotateX(${rotX}) rotateY(${rotY}) translate(${dx1}px, ${dy1}px)`;
+          elLayer2.style.transform = `rotateX(${rotX}) rotateY(${rotY}) translate(${dx2}px, ${dy2}px) scale(${scale1})`;
+          elLayer3.style.transform = `rotateX(${rotX}) rotateY(${rotY}) translate(${dx4}px, ${dy4}px) scale(${scale3})`;
+          elLayer4.style.transform = `rotateX(${rotX}) rotateY(${rotY}) translate(${dx4}px, ${dy4}px) scale(${scale3})`;
+          elShadow.style.transform = `rotateX(${rotX}) rotateY(${rotY}) translate(${dx4}px, ${dy4}px) scale(${scale3})`;
+          elContainer.style.transform = `rotateX(${rotX}) rotateY(${rotY}) translate(${dx4}px, ${dy4}px) scale(${scale3})`;
         }
       }
-
-      setInterval(onEnterFrame2, 1000 / 50);
     }
   </script>
   <style>
     body {
       overflow: hidden;
+      margin: 0;
+      padding: 0;
+      background-color: #eeeae0;
     }
 
     canvas {
@@ -255,8 +236,6 @@
       padding: 1em;
       margin: 2em auto 5em;
       background: #fff;
-      -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 60px rgba(0, 0, 0, 0.1) inset;
-      -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
       box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
     }
 
@@ -283,21 +262,26 @@
       bottom: 0;
       box-shadow: 0 8px 12px rgba(0, 0, 0, 0.5);
     }
+
+    .layer {
+      perspective: 500px;
+    }
   </style>
 </head>
-<body style="margin: 0; padding:0; background-color:#EEEAE0;" onload="init()">
+<body>
 <div id="root">
-  <canvas id="original" width="400" height="500" style="display: none;"></canvas>
-  <canvas id="map" width="400" height="500" style="display: none;"></canvas>
-  <div id="shadow" class="drop-shadow raised"
-       style="position:absolute; width:384px; height:485px; top:50%; left:50%; margin:-258px 0 0 -208px;"></div>
-  <div id="container"
-       style="position:absolute; width:400px; height:500px; top:50%; left:50%; margin:-250px 0 0 -200px; background-image:url('img/canvas.jpg');"></div>
-  <canvas id="layer0" width="400" height="500" style="z-index:14;"></canvas>
-  <canvas id="layer1" width="400" height="500" style="z-index:13;"></canvas>
-  <canvas id="layer2" width="400" height="500" style="z-index:12;"></canvas>
-  <canvas id="layer3" width="400" height="500" style="z-index:11;"></canvas>
-  <canvas id="layer4" width="400" height="500" style="z-index:10;"></canvas>
+  <canvas id="original" width="400" height="500" style="display: none"></canvas>
+  <canvas id="map" width="400" height="500" style="display: none"></canvas>
+  <div id="shadow" class="drop-shadow raised" style="position: absolute; width: 384px; height: 485px; top: 50%; left: 50%; margin: -258px 0 0 -208px"></div>
+  <div
+          id="container"
+          style="position: absolute; width: 400px; height: 500px; top: 50%; left: 50%; margin: -250px 0 0 -200px; background-image: url('img/canvas.jpg')"
+  ></div>
+  <canvas id="layer0" class="layer" width="400" height="500" style="z-index: 14"></canvas>
+  <canvas id="layer1" class="layer" width="400" height="500" style="z-index: 13"></canvas>
+  <canvas id="layer2" class="layer" width="400" height="500" style="z-index: 12"></canvas>
+  <canvas id="layer3" class="layer" width="400" height="500" style="z-index: 11"></canvas>
+  <canvas id="layer4" class="layer" width="400" height="500" style="z-index: 10"></canvas>
 </div>
 </body>
 </html>
