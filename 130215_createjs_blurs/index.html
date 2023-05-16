@@ -1,49 +1,25 @@
 ﻿<!DOCTYPE html>
 <html>
-<!-- saved from url=(0014)about:internet -->
 <head>
   <meta charset="UTF-8"/>
   <meta name="google" value="notranslate"/>
-  <title>Blur Light using CreateJS | ICS LAB</title>
+  <meta name="viewport" content="width=960"/>
+  <title>Blur Light using CreateJS | ICS MEDIA</title>
 
   <link href="../commons/demo.css" rel="stylesheet" type="text/css">
 
-  <!-- Typekit -->
-  <script type="text/javascript" src="http://use.typekit.com/kut8wlc.js"></script>
-  <script type="text/javascript">try {
-    Typekit.load();
-  } catch (e) {
-  }</script>
-
-  <!-- Google Analytics -->
-  <script type="text/javascript">//<![CDATA[
-  // Google Analytics
-  var _gaq = _gaq || [];
-  _gaq.push(["_setAccount", "UA-34243464-1"]);
-  _gaq.push(["_trackPageview"]);
-  (function () {
-    var ga = document.createElement("script");
-    ga.type = "text/javascript";
-    ga.async = true;
-    ga.src = ("https:" == document.location.protocol ? "https://ssl" : "http://www") + ".google-analytics.com/ga.js";
-    var s = document.getElementsByTagName("script")[0];
-    s.parentNode.insertBefore(ga, s);
-  })();
-  //]]></script>
-
-
-  <script src="https://code.createjs.com/createjs-2013.02.12.min.js"></script>
+  <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
   <script src="easeljs/filters/BoxBlurFilter.js"></script>
   <script>
 
-    var stage;
-    var mouseX = 480;
-    var mouseY = 270;
-    var circlesPool = [];
+    let stage;
+    let mouseX = 480;
+    let mouseY = 270;
+    const circlesPool = [];
 
     function init() {
       // canvasの参照を取得します
-      var canvas = document.getElementById("myCanvas");
+      const canvas = document.getElementById("myCanvas");
 
       // Stageオブジェクトを作成。表示リストのルートになります。
       stage = new createjs.Stage(canvas);
@@ -54,14 +30,14 @@
       }
 
       // マウス座標の取得
-      stage.onMouseMove = onMouseMove;
+      stage.on("stagemousemove", onMouseMove)
 
       createCirclePool();
 
       // エンターフレーム
-      createjs.Ticker.setFPS(60);
+      createjs.Ticker.framerate = 60;
       createjs.Ticker.useRAF = true;
-      createjs.Ticker.addListener(window);
+      createjs.Ticker.on("tick", tick);
     }
 
     function onMouseMove(event) {
@@ -72,15 +48,15 @@
 
     function createCirclePool() {
 
-      for (var i = 0; i < 100; i++) {
+      for (let i = 0; i < 100; i++) {
         // ぼかしフィルターを作成(ぼかしの適用量はランダム)
-        var blurVal = [2, 4, 8, 16, 32][Math.floor(Math.random() * 5)];
-        var blurFilter = new createjs.BoxBlurFilter(blurVal, blurVal, 2);
-        var margins = blurFilter.getBounds(); // フィルターの余白を取得
+        const blurVal = [2, 4, 8, 16, 32][Math.floor(Math.random() * 5)];
+        const blurFilter = new createjs.BlurFilter(blurVal, blurVal, 2);
+        const margins = blurFilter.getBounds(); // フィルターの余白を取得
 
         // 円を作成
-        var shape = new createjs.Shape();
-        var size = Math.random() * 40 + 10;
+        const shape = new createjs.Shape();
+        const size = Math.random() * 40 + 10;
         shape.graphics.beginFill("hsl(" + (i * 3) + ", 50%, 50%)"); // 赤色で描画するように設定
         shape.graphics.drawCircle(0, 0, size); //半径100pxの円を描画
 
@@ -104,7 +80,7 @@
     }
 
     function createCircle() {
-      var shape = getPool();
+      const shape = getPool();
       if (shape) {
         // リセット
         // 座標
@@ -123,9 +99,8 @@
     }
 
     function getPool() {
-      for (var i = 0; i < circlesPool.length; i++) {
-        if (circlesPool[i].isUseObject == false) {
-          console.log(i);
+      for (let i = 0; i < circlesPool.length; i++) {
+        if (circlesPool[i].isUseObject === false) {
           return circlesPool[i];
         }
       }
@@ -133,9 +108,9 @@
 
     function updateCircles() {
       // 配列内のシェイプすべてをアップデート
-      for (var i = 0; i < circlesPool.length; i++) {
-        var shape = circlesPool[i];
-        if (shape.isUseObject == true) {
+      for (let i = 0; i < circlesPool.length; i++) {
+        const shape = circlesPool[i];
+        if (shape.isUseObject === true) {
           shape.x += shape.vx; // 速度の反映
           shape.y += shape.vy;
           shape.alpha -= 0.01; // アルファを下げる
@@ -153,7 +128,7 @@
 <body onload="init();">
 
 <div id="container">
-  <div id="flashContent">
+  <div >
     <canvas id="myCanvas" width="980" height="580" style="background-color: #000; border:2px #000 solid;"></canvas>
   </div>
   <h2>Blur Light (HTML5)</h2>

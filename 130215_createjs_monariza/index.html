@@ -1,63 +1,64 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=960"/>
   <title>CreateJS Sample</title>
   <script src="js/jquery-1.9.1.js"></script>
-  <script src="js/easeljs-0.5.0.min.js"></script>
+  <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
   <script src="js/jquery.transit.min.js"></script>
-  <script type="text/javascript">
+  <script>
     function init() {
 
-      var layer0 = new createjs.Stage("layer0");
-      var layer1 = new createjs.Stage("layer1");
-      var layer2 = new createjs.Stage("layer2");
-      var layer3 = new createjs.Stage("layer3");
-      var layer4 = new createjs.Stage("layer4");
-      var cache0 = new createjs.Shape();
-      var cache1 = new createjs.Shape();
-      var cache2 = new createjs.Shape();
-      var cache3 = new createjs.Shape();
-      var cache4 = new createjs.Shape();
-      var canvas0 = new createjs.Shape();
-      var canvas1 = new createjs.Shape();
-      var canvas2 = new createjs.Shape();
-      var canvas3 = new createjs.Shape();
-      var canvas4 = new createjs.Shape();
-      var temp0 = new createjs.Shape();
-      var temp1 = new createjs.Shape();
-      var temp2 = new createjs.Shape();
-      var temp3 = new createjs.Shape();
-      var temp4 = new createjs.Shape();
-      var layerList = [layer0, layer1, layer2, layer3, layer4];
-      var cacheList = [cache0, cache1, cache2, cache3, cache4];
-      var canvasList = [cache0, canvas1, canvas2, canvas3, canvas4];
-      var tempList = [temp0, temp1, temp2, temp3, temp4];
+      const layer0 = new createjs.Stage("layer0");
+      const layer1 = new createjs.Stage("layer1");
+      const layer2 = new createjs.Stage("layer2");
+      const layer3 = new createjs.Stage("layer3");
+      const layer4 = new createjs.Stage("layer4");
+      const cache0 = new createjs.Shape();
+      const cache1 = new createjs.Shape();
+      const cache2 = new createjs.Shape();
+      const cache3 = new createjs.Shape();
+      const cache4 = new createjs.Shape();
+      const canvas0 = new createjs.Shape();
+      const canvas1 = new createjs.Shape();
+      const canvas2 = new createjs.Shape();
+      const canvas3 = new createjs.Shape();
+      const canvas4 = new createjs.Shape();
+      const temp0 = new createjs.Shape();
+      const temp1 = new createjs.Shape();
+      const temp2 = new createjs.Shape();
+      const temp3 = new createjs.Shape();
+      const temp4 = new createjs.Shape();
+      const layerList = [layer0, layer1, layer2, layer3, layer4];
+      const cacheList = [cache0, cache1, cache2, cache3, cache4];
+      const canvasList = [cache0, canvas1, canvas2, canvas3, canvas4];
+      const tempList = [temp0, temp1, temp2, temp3, temp4];
 
-      var $layer0 = $("#layer0");
-      var $layer1 = $("#layer1");
-      var $layer2 = $("#layer2");
-      var $layer3 = $("#layer3");
-      var $layer4 = $("#layer4");
-      var $container = $("#container");
-      var $shadow = $("#shadow");
+      const $layer0 = $("#layer0");
+      const $layer1 = $("#layer1");
+      const $layer2 = $("#layer2");
+      const $layer3 = $("#layer3");
+      const $layer4 = $("#layer4");
+      const $container = $("#container");
+      const $shadow = $("#shadow");
 
-      var mouseX = 0;
-      var mouseY = 0;
-      var dragX = 0;
-      var dragY = 0;
-      var drawX = 0;
-      var drawY = 0;
-      var isDrag = false;
-      var isDraw = false;
+      let mouseX = 0;
+      let mouseY = 0;
+      let dragX = 0;
+      let dragY = 0;
+      let drawX = 0;
+      let drawY = 0;
+      let isDrag = false;
+      let isDraw = false;
 
-      var image = new createjs.Stage("original");
+      const image = new createjs.Stage("original");
       image.addChild(new createjs.Bitmap("img/monariza.jpg"));
 
-      var map = new createjs.Stage("map");
+      const map = new createjs.Stage("map");
       map.addChild(new createjs.Bitmap("img/map.jpg"));
 
-      var cursor = new createjs.Shape();
+      const cursor = new createjs.Shape();
       cursor.graphics.beginFill("#000");
       cursor.graphics.drawCircle(0, 0, 5);
 
@@ -66,13 +67,13 @@
 
       //------------------------------------------------------------------------------------------
 
-
       $layer0.mouseover(function () {
         isDraw = true;
       });
       $layer0.mouseout(function () {
         isDraw = false;
       });
+
       $(window).mousemove(function (e) {
         mouseX = e.clientX;
         mouseY = e.clientY;
@@ -101,25 +102,25 @@
       function onEnterFrame() {
 
         if (isDraw && !isDrag) {
-          var tx = layer1.mouseX;
-          var ty = layer1.mouseY;
+          const tx = layer1.mouseX;
+          const ty = layer1.mouseY;
           drawX += (tx - drawX) / 8;
           drawY += (ty - drawY) / 8;
           cursor.x = drawX;
           cursor.y = drawY;
 
-          var context = image.canvas.getContext("2d");
+          const context = image.canvas.getContext("2d");
           image.update();
           map.update();
 
-          for (var i = 0; i < 120; i++) {
-            var id;
-            var tx = layer1.mouseX + Math.random() * 120 - 60;
-            var ty = layer1.mouseY + Math.random() * 120 - 60;
-            var size = 5 + Math.random() * 6;
-            var data = context.getImageData(tx, ty, 1, 1).data;
+          for (let i = 0; i < 120; i++) {
+            let id;
+            const tx = layer1.mouseX + Math.random() * 120 - 60;
+            const ty = layer1.mouseY + Math.random() * 120 - 60;
+            const size = 5 + Math.random() * 6;
+            const data = context.getImageData(tx, ty, 1, 1).data;
 
-            var mc = map.canvas.getContext("2d").getImageData(tx, ty, 1, 1).data[0];
+            const mc = map.canvas.getContext("2d").getImageData(tx, ty, 1, 1).data[0];
             if (mc < 60) id = 4;
             else if (mc < 110) id = 3;
             else if (mc < 160) id = 2;
@@ -129,16 +130,16 @@
             if (mc) {
               for (var j = 0; j < 5; j++) {
                 if (j >= id) {
-                  var layer = layerList[j];
-                  var canvas = canvasList[j];
-                  var cache = cacheList[j];
-                  var temp = tempList[j];
-                  var color;
+                  const layer = layerList[j];
+                  const canvas = canvasList[j];
+                  const cache = cacheList[j];
+                  const temp = tempList[j];
+                  let color;
 
-                  if (j == id) {
+                  if (j === id) {
                     color = createjs.Graphics.getRGB(data[0], data[1], data[2]);
                   } else {
-                    var r = Math.random();
+                    const r = Math.random();
                     switch (j) {
                       case 0:
                         color = "#e7b64e";
@@ -203,25 +204,25 @@
 
       function onEnterFrame2() {
         if (isDrag) {
-          var tx = mouseX - dragX;
-          var ty = mouseY - dragY;
-          var rateY = tx / 2600;
-          var rateX = ty / 2600;
-          var scale1 = 1 - Math.abs(rateY) * 0.1;
-          var scale2 = 1 - Math.abs(rateY) * 0.15;
-          var scale3 = 1 - Math.abs(rateY) * 0.2;
-          var pers = "500px";
-          var rotY = (30 * rateY) + "deg";
-          var rotX = (-30 * rateX) + "deg";
-          var sd = 2.5;
-          var dx1 = -40 * rateY * sd;
-          var dx2 = -45 * rateY * sd;
-          var dx3 = -60 * rateY * sd;
-          var dx4 = -70 * rateY * sd;
-          var dy1 = -40 * rateX * sd;
-          var dy2 = -45 * rateX * sd;
-          var dy3 = -60 * rateX * sd;
-          var dy4 = -70 * rateX * sd;
+          const tx = mouseX - dragX;
+          const ty = mouseY - dragY;
+          const rateY = tx / 2600;
+          const rateX = ty / 2600;
+          const scale1 = 1 - Math.abs(rateY) * 0.1;
+          const scale2 = 1 - Math.abs(rateY) * 0.15;
+          const scale3 = 1 - Math.abs(rateY) * 0.2;
+          const pers = "500px";
+          const rotY = (30 * rateY) + "deg";
+          const rotX = (-30 * rateX) + "deg";
+          const sd = 2.5;
+          const dx1 = -40 * rateY * sd;
+          const dx2 = -45 * rateY * sd;
+          const dx3 = -60 * rateY * sd;
+          const dx4 = -70 * rateY * sd;
+          const dy1 = -40 * rateX * sd;
+          const dy2 = -45 * rateX * sd;
+          const dy3 = -60 * rateX * sd;
+          const dy4 = -70 * rateX * sd;
 
           $layer0.stop().css({perspective: pers, rotateX: rotX, rotateY: rotY, x: dx1 * 0.9, y: dy1 * 0.9});
           $layer1.stop().css({perspective: pers, rotateX: rotX, rotateY: rotY, x: dx1, y: dy1});
@@ -237,6 +238,10 @@
     }
   </script>
   <style>
+    body {
+      overflow: hidden;
+    }
+
     canvas {
       position: absolute;
       top: 50%;
@@ -276,8 +281,6 @@
       right: 10px;
       left: 10px;
       bottom: 0;
-      -webkit-box-shadow: 0 8px 12px rgba(0, 0, 0, 0.5);
-      -moz-box-shadow: 0 8px 12px rgba(0, 0, 0, 0.5);
       box-shadow: 0 8px 12px rgba(0, 0, 0, 0.5);
     }
   </style>
